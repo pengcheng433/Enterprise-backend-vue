@@ -22,6 +22,7 @@
 import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue'
 import { isMobile } from '@/utils/device'
 import { debounce } from 'lodash-unified'
+// eslint-disable-next-line no-unused-vars
 
 import YuCopyright from '@/components/YuCopyright'
 import Logo from './components/logo.vue'

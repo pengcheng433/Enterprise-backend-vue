@@ -83,10 +83,10 @@
 
 <script setup>
 import { ref, onBeforeMount, reactive, computed } from 'vue'
-import { login } from '@/api/user'
+import { login, UserList } from '@/api/user'
 import { useUserStore } from '@/store'
 import { useRouter, useRoute } from 'vue-router'
-
+// import axios from 'axios'
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
@@ -162,16 +162,21 @@ function loginHandle() {
     if ( valid ) {
       try {
         const params = {
-          username : formState.account,
-          password : formState.password
+          userid : 'pengcheng433',
+          userpwd : 1
         }
         if ( showCaptcha.value ) {
           params.captchaId = captchaId.value
           params.captchaValue = formState.captcha
         }
-        const { data } = await login( { params } )
-        const { token } = data
-        userStore.SET_TOKEN( token )
+        const res = await login( params )
+        localStorage.setItem( 'token', res.data.token )
+
+        const userListr = await UserList( { pagesize : 10, currentPage : 1 } )
+        console.log( userListr )
+
+        // const { token } = data
+        userStore.SET_TOKEN( res.data.token )
         router.push( '/' )
       } catch ( e ) {
       } finally {

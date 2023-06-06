@@ -14,12 +14,13 @@ import cookies from '@/utils/cookies'
 import router from '@/router'
 import { useUserStore } from '@/store'
 
-import { TOKEN, WHITE_CODE_LIST, LOGIN_ERROR_CODE, GLOBAL_DATA } from '@/config/constant'
+import { WHITE_CODE_LIST, LOGIN_ERROR_CODE, GLOBAL_DATA } from '@/config/constant' // REMOVE TOKEN,
 // import qs from 'qs'
 class HttpRequest {
   // #baseUrl
   constructor() {
     this.baseUrl = this.getBaseUrl()
+    this.baseUrl = 'http://localhost:3031'
     this.withCredentials = false
     this.timeout = 60 * 60 * 24 * 1000
   }
@@ -113,15 +114,22 @@ class HttpRequest {
           } )
           return Promise.reject( new Error( '请检查您的网络是否正常' ) )
         }
-        const token = cookies.get( TOKEN )
+
+        const token = localStorage.getItem( 'token' ) // 从本地存储中获取 Token
         if ( token ) {
-          config.headers.Authorization = token
+          config.headers.Authorization = `${token}`
         }
+        // const token = cookies.get( TOKEN )
+        // if ( token ) {
+        //   config.headers.authorization = token
+        // }
         // config.data = qs.stringify( config.data )
 
         return config
       },
       error => {
+        console.log( 'error' )
+        console.log( error )
         return Promise.reject( new Error( error ) )
       }
     )
@@ -139,6 +147,7 @@ class HttpRequest {
           return result
         } else {
           const { code, message } = result
+
           const isErrorToken = LOGIN_ERROR_CODE.find( item => item.code == code )
           const isWhiteCode = WHITE_CODE_LIST.find( item => item.code == code )
 
@@ -163,6 +172,8 @@ class HttpRequest {
         return result
       },
       error => {
+        cookies.clearAll()
+        router.push( { path : '/' } )
         if ( error && error.response ) {
           error.message = that.checkStatus( error.response.status )
         }

@@ -3,16 +3,16 @@ import http from '@/utils/request'
 // 用户列表
 export function UserList( data ) {
   return http.request( {
-    method : 'post',
-    url : '/v1/user/list',
+    method : 'get',
+    url : '/user',
     data
   } )
 }
 
 export function login( data ) {
   return http.request( {
-    method : 'get',
-    url : '/login',
+    method : 'post',
+    url : '/getinfo',
     data
   } )
 }

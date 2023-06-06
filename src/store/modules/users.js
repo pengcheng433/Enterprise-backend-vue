@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import cookies from '@/utils/cookies'
 import { TOKEN, AVATAR } from '@/config/constant'
-import { logout, getInfo } from '@/api/user'
+import { getInfo } from '@/api/user' // logout,
 import { resetRouter } from '@/router'
 import useTagsViewStore from './tagsView'
 
@@ -16,7 +16,7 @@ const useUserStore = defineStore( {
       phone : '15988888888',
       email : '454539387@qq.com',
       identity : '',
-      roles : []
+      roles : ['admin']
     }
   },
   actions : {
@@ -48,17 +48,17 @@ const useUserStore = defineStore( {
     },
     async LOGIN_OUT() {
       try {
-        const { code } = await logout( this.token )
-        if ( code == 200 ) {
-          this.token = ''
-          this.name = ''
-          this.avatar = ''
-          this.phone = ''
-          this.email = ''
-          this.identity = ''
-          this.roles = []
-          this.RESET_INFO()
-        }
+        // const { code } = await logout( this.token )
+        // if ( code == 200 ) {
+        this.token = ''
+        this.name = ''
+        this.avatar = ''
+        this.phone = ''
+        this.email = ''
+        this.identity = ''
+        this.roles = []
+        this.RESET_INFO()
+        // }
       } catch ( error ) {
         return error
       }

@@ -55,6 +55,7 @@ const usePermissionStore = defineStore( {
         }
         this.addRoutes = accessedRoutes
         this.routes = constantRoutes.concat( accessedRoutes )
+        console.log( this.routes )
         resolve( accessedRoutes )
       } )
     },

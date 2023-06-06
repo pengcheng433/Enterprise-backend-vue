@@ -16,8 +16,8 @@
     "prepare": "husky install"
   },
   "author": {
-    "name": "灰是小灰灰的灰",
-    "email": "454539387@qq.com",
+    "name": "",
+    "email": "",
     "url": ""
   },
   "dependencies": {

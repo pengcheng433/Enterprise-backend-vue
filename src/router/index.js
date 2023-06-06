@@ -6,6 +6,7 @@ import {
 
 import Layout from '@/layout/index.vue'
 import nested from './modules/nested'
+import usermanger from './modules/usermanger'
 import customComponents from './modules/customComponents'
 
 // 配置路由信息
@@ -205,7 +206,7 @@ export const asyncRoutes = [
   },
 
   nested,
-
+  usermanger,
   {
     path : '/table',
     name : 'Table',

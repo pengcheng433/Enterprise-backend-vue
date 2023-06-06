@@ -115,6 +115,7 @@ const set = reactive( {
 // 退出登录
 const logout = async() => {
   await userStore.LOGIN_OUT()
+  localStorage.clear()
   router.push( '/login' )
   window.location.reload()
 }
