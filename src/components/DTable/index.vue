@@ -1,7 +1,7 @@
 <template>
   <div class="data_table">
     <el-table
-     ref="tableRef"
+      ref="tableRef"
       v-bind="$attrs"
       :row-key="rowKey"
       :data="tableData"
@@ -137,7 +137,8 @@ const handleFormatter = ( colItem, row, column, cellValue, index ) => {
           class='form-item-comp'
           {...{ on : ops.on || {}, attrs : ops }}
           v-model={o[k]}
-          compis={compis}></CommComp>
+          compis={compis}
+        ></CommComp>
       )
     }
   } else if ( typeof colItem.render === 'function' ) {
@@ -154,7 +155,8 @@ const handleFormatter = ( colItem, row, column, cellValue, index ) => {
             class='form-item-comp'
             {...{ on : ops.on || {}, attrs : ops }}
             v-model={o[k]}
-            compis={compis}></CommComp>
+            compis={compis}
+          ></CommComp>
         )
       }
     } else {
