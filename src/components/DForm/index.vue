@@ -12,8 +12,14 @@
       >
         <el-form-item :prop="item.prop" :label="item.label" :rules="item.rules" :required="item.required">
           <template v-if="item.is === 'radio'">
-            <el-radio-group v-model="formData[item.prop]" :size="item.option?.size || 'default'" >
-              <el-radio v-for="option in item.option?.list" :key="option.value" :label="option.value" :disabled="option?.disabled || false" :border="item.option?.border || false">
+            <el-radio-group v-model="formData[item.prop]" :size="item.option?.size || 'default'">
+              <el-radio
+                v-for="option in item.option?.list"
+                :key="option.value"
+                :label="option.value"
+                :disabled="option?.disabled || false"
+                :border="item.option?.border || false"
+              >
                 {{ option.label }}
               </el-radio>
             </el-radio-group>
