@@ -22,6 +22,15 @@ export default {
       }
     },
     {
+      path : 'role',
+      name : 'role',
+      component : () => import( '@/views/setting/rolemagnet/roleList.vue' ),
+      meta : {
+        title : '角色管理',
+        noCache : false
+      }
+    },
+    {
       path : 'menumanger',
       name : 'menumanger',
       component : () => import( '@/views/nested/menu2/index.vue' ),

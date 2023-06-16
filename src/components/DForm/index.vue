@@ -24,6 +24,17 @@
               </el-radio>
             </el-radio-group>
           </template>
+          <template v-else-if="item.is === 'tree'">
+            <el-tree
+              :data="item.option.data"
+              :props="item.option.props || { children: 'children', label: 'label' }"
+              :show-checkbox="item.option.showCheckbox || true"
+              :node-key="item.option.nodeKey || 'id'"
+              :default-checked-keys="formData[item.prop]"
+              @check="(obj1, obj2) => updateFormData(obj1, obj2, item.prop)"
+            ></el-tree>
+          </template>
+
           <template v-else>
             <el-input
               :disabled="item?.disabled || false"
@@ -71,6 +82,9 @@ const props = defineProps( {
 } )
 
 const formData = reactive( props.form )
+const updateFormData = ( obj1, obj2, prop ) => {
+  formData[prop] = obj2.checkedKeys
+}
 </script>
 
 <style scoped>
