@@ -63,7 +63,7 @@
             <el-input-number v-model="formData[item.prop]" :min="1" :controls="false" />
           </template>
           <template v-else-if="item.is === 'select'">
-            <el-select v-model="formData[item.prop]" :placeholder="`选择${item.label}`" >
+            <el-select v-model="formData[item.prop]" :placeholder="`选择${item.label}`">
               <el-option
                 v-for="sitem in item.option.list"
                 :key="sitem[item.option.value]"

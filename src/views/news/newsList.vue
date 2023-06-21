@@ -5,7 +5,7 @@
         <el-row class="flex-row flex-between">
           <div class="flex-row">
             <el-input class="w-50" v-model="searchform.search" placeholder="输入标题" />
-            <el-select  class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large">
+            <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large">
               <el-option v-for="item in options.list" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-button class="ml-2" :icon="Search" circle @click="getnewList" />
@@ -94,7 +94,8 @@ const tableColumns = ref( [
             fit='cover'
             z-index={10001}
             preview-src-list={[row.coverImage]}
-            preview-teleported={true}></el-image>{' '}
+            preview-teleported={true}
+          ></el-image>{' '}
         </div>
       )
     }
@@ -204,10 +205,10 @@ defineExpose( { tableItemSelectionRef } )
   width: 200px;
   height: 200px;
 }
-.w-50{
-width: 12.5rem;
+.w-50 {
+  width: 12.5rem;
 }
-.ml-1{
+.ml-1 {
   margin-left: 1rem;
 }
 </style>

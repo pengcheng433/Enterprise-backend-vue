@@ -237,7 +237,6 @@ export const asyncRoutes = [
         name : 'editNews',
         meta : { title : '编辑文章', noCache : true }
       }
-
     ]
   },
   usermanger,
