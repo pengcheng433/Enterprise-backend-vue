@@ -56,12 +56,14 @@ onMounted( () => {
 } )
 
 const getDicList = async() => {
-  const list = await roleList()
+  const list = await roleList( { search : '' } )
+  console.log( list )
   rolelist.list = transformArray( list.data )
   rolelist.list = rolelist.list.filter( item => item.id !== 1 )
 }
 const getuserList = async() => {
   const userListr = await UserList( searchform )
+  console.log( 'userListr:', userListr )
   tableData.value = userListr?.data?.data || []
 }
 

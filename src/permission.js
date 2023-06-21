@@ -7,17 +7,18 @@ import NProgress from '@/utils/progress'
 
 const whiteList = ['/login']
 router.beforeEach( async( to, from, next ) => {
+  console.log( to )
   NProgress.start()
   document.title = getPageTitle( to.meta?.title )
   const hasToken = cookies.get( TOKEN )
-
-  console.log( hasToken )
+  if ( to.query.title ) {
+    document.title = getPageTitle( to.query.title )
+  }
   // const userStore = useUserStore()
   const permissionStore = usePermissionStore()
   if ( hasToken && hasToken !== 'undefined' ) {
-    console.log( 11111111 )
-    console.log( to.path )
     const accessRoutes = await permissionStore.SET_ROUTES( 'admin' )
+
     accessRoutes.forEach( item => {
       router.addRoute( item )
     } )

@@ -5,7 +5,7 @@
         <el-row class="flex-row flex-between">
           <div class="flex-row">
             <el-input v-model="searchform.search" placeholder="输入名称或者备注" />
-            <el-button class="ml-2" :icon="Search" circle @click="getuserList" />
+            <el-button class="ml-2" :icon="Search" circle @click="getroleList" />
           </div>
           <div>
             <el-button type="primary" :icon="Plus" circle @click="openDialog"></el-button>
@@ -33,9 +33,7 @@
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
 import { permissonTree } from '@/api/permisson'
-
 import { roleList, addRole, delRole, findRole, updateUser } from '@/api/role'
-
 import CustomTable from '@/components/DTable'
 import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
@@ -47,7 +45,7 @@ onMounted( () => {
 } )
 
 const getroleList = async() => {
-  const { data } = await roleList()
+  const { data } = await roleList( searchform )
   tableData.value = data
 }
 const getpermissonTree = async() => {
@@ -62,12 +60,6 @@ const selectionTable = computed( () => {
   return tableItemSelectionRef?.value?.multipleSelection || []
 } )
 
-// eslint-disable-next-line no-unused-vars
-const add = row => {
-  console.log( customFormPwd.value )
-  console.log( selectionTable.value )
-}
-
 const edit = async row => {
   const { id } = row
   const { data } = await findRole( { roleId : id } )
@@ -76,8 +68,6 @@ const edit = async row => {
   form.description = data.description
   form.permission = data.permission
   dialogVisible.value = true
-  console.log( data )
-  console.log( delRole )
 }
 
 const tableColumns = ref( [
@@ -144,17 +134,6 @@ const dels = row => {
   } )
 }
 
-// const closeDialog = () => {
-//   resetVisible.value = true
-// }
-
-// 使用 reactive 创建响应式对象
-// const rolelist = reactive( {
-//   list : [],
-//   border : true,
-//   size : 'large'
-// } )
-
 const treeoption = reactive( {
   data : [],
   showCheckbox : true,
@@ -169,13 +148,6 @@ const formItems = ref( [
     rules : [{ required : true, message : '必须输入账号', trigger : 'blur' }]
   },
 
-  //   {
-  //     prop : 'role',
-  //     is : 'radio',
-  //     option : rolelist,
-  //     label : '角色',
-  //     rules : [{ required : true, message : '必须选择角色', trigger : 'blur' }]
-  //   },
   {
     prop : 'permission',
     is : 'tree',
@@ -191,9 +163,8 @@ const formItems = ref( [
 ] )
 
 const searchform = reactive( {
-  search : '',
-  pagesize : 10,
-  currentPage : 1
+  search : ''
+
 } )
 const form = reactive( {
   description : '',

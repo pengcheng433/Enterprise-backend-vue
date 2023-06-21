@@ -206,6 +206,40 @@ export const asyncRoutes = [
   },
 
   nested,
+  {
+    path : '/news',
+    name : 'news',
+    component : Layout,
+    meta : { title : '文章新闻', icon : 'about', noCache : true, roles : ['admin'] },
+    children : [
+      {
+        path : 'newscategory',
+        component : () => import( '@/views/news/newsList.vue' ),
+        name : 'newscategory',
+        meta : { title : '种类管理', noCache : true }
+      },
+      {
+        path : 'newlist',
+        component : () => import( '@/views/news/newsList.vue' ),
+        name : 'newlist',
+        meta : { title : '文章列表', noCache : true }
+      },
+      {
+        path : 'addnews',
+        component : () => import( '@/views/news/addNews.vue' ),
+        name : 'addnews',
+        meta : { title : '添加文章', noCache : true }
+      },
+      {
+        path : 'editNews',
+        hidden : true,
+        component : () => import( '@/views/news/editNews.vue' ),
+        name : 'editNews',
+        meta : { title : '编辑文章', noCache : true }
+      }
+
+    ]
+  },
   usermanger,
   {
     path : '/table',

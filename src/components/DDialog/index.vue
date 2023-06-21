@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="title" :width="width" :before-close="handleClose" :destroy-on-close="destroyOnClose">
+  <el-dialog
+    v-model="dialogVisible"
+    :title="title"
+    :width="width"
+    :before-close="handleClose"
+    :destroy-on-close="destroyOnClose"
+  >
     <slot></slot>
     <!-- <template #footer>
       <span class="dialog-footer">
@@ -30,7 +36,6 @@ const props = defineProps( {
     type : Boolean,
     default : false
   }
-
 } )
 
 const dialogVisible = ref( props.visible )

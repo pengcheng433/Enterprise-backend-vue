@@ -1,11 +1,4 @@
-/**
- * @Description: axios封装
- * @Author: 灰是小灰灰的灰
- * @Email: 454539387@qq.com
- * @Date: 2021-07-06 11:49:40
- * @LastEditors: 灰是小灰灰的灰
- * @LastEditTime: 2021-07-06 11:49:40
- */
+
 'use strict'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
@@ -45,12 +38,18 @@ class HttpRequest {
 
   getParams( payload ) {
     const { method, data } = payload
+
     if ( ['post', 'put', 'patch', 'delete'].indexOf( method ) >= 0 ) {
       payload.data = data
     } else {
       payload.params = data
       delete payload.data
     }
+
+    payload.headers = {
+      'Content-Type' : payload.type != 'upload' ? 'application/json;charset=UTF-8' : 'multipart/form-data'
+    }
+
     return payload
   }
 
@@ -117,12 +116,9 @@ class HttpRequest {
 
         const token = localStorage.getItem( 'token' ) // 从本地存储中获取 Token
         if ( token ) {
-          config.headers.Authorization = `${token}`
+          config.headers.Authorization = token
         }
-        // const token = cookies.get( TOKEN )
-        // if ( token ) {
-        //   config.headers.authorization = token
-        // }
+
         // config.data = qs.stringify( config.data )
 
         return config
@@ -140,8 +136,6 @@ class HttpRequest {
         const result = res.data
         const type = Object.prototype.toString.call( result )
 
-        // const $config = res.config
-
         // 如果是文件流 直接返回
         if ( type === '[object Blob]' || type === '[object ArrayBuffer]' ) {
           return result
@@ -157,6 +151,7 @@ class HttpRequest {
             userStore.LOGIN_OUT()
             router.push( '/login' )
             window.location.reload()
+            return Promise.reject( new Error( message || 'Error' ) )
           } else if ( !isWhiteCode ) {
             ElMessage( {
               message : message || 'Error',
@@ -168,8 +163,6 @@ class HttpRequest {
             return result
           }
         }
-
-        return result
       },
       error => {
         cookies.clearAll()

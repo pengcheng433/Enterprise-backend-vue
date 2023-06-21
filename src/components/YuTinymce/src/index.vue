@@ -10,7 +10,7 @@ import plugins from './plugins'
 import toolbar from './toolbar'
 import loadScript from './dynamicLoadScript'
 import { ElMessage } from 'element-plus'
-
+import { uoloadImg } from '@/api/news'
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js'
 const props = defineProps( {
   id : {
@@ -77,6 +77,24 @@ const initTinymce = () => {
     toolbar : props.readOnly ? false : props.toolbar.length > 0 ? props.toolbar : toolbar,
     menubar : props.readOnly ? false : props.menubar,
     plugins : props.readOnly ? false : plugins,
+    // 图片上传配置
+    images_upload_url : '/upload/image', // 图片上传的 URL
+    images_upload_handler : async( blobInfo, success, failure ) => {
+      // 获取上传的文件
+      var file = blobInfo.blob()
+
+      // 创建一个 FormData 对象
+      var formData = new FormData()
+      formData.append( 'file', file, file.name )
+      const res = await uoloadImg( formData )
+
+      if ( res.data.url ) {
+        success( res.data.url )
+        ElMessage.success( res.msg )
+      } else {
+        ElMessage.warn( res.msg )
+      }
+    },
     end_container_on_empty_block : true,
     powerpaste_word_import : 'clean',
     code_dialog_height : 450,

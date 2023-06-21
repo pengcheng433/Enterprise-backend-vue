@@ -4,6 +4,7 @@
       <div class="section-container fix-width">
         <YuTinymce :value="form.contents" :height="500" @input="getEditorContent" />
       </div>
+      <button @click="go">test</button>
     </template>
   </YuLayout>
 </template>
@@ -27,4 +28,7 @@ const getEditorContent = info => {
 defineOptions( {
   name : 'Editor'
 } )
+const go = () => {
+  console.log( form )
+}
 </script>
