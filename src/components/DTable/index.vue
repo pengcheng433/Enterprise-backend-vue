@@ -1,6 +1,8 @@
 <template>
   <div class="data_table">
     <el-table
+      v-loading="loading"
+      element-loading-background="rgba(122, 122, 122, 0.8)"
       ref="tableRef"
       v-bind="$attrs"
       :row-key="rowKey"
@@ -99,6 +101,10 @@ const props = defineProps( {
     type : Boolean,
     default : false
   },
+  loading : {
+    type : Boolean,
+    default : false
+  },
   searchParams : {
     type : Object,
     default : () => {
@@ -137,8 +143,7 @@ const handleFormatter = ( colItem, row, column, cellValue, index ) => {
           class='form-item-comp'
           {...{ on : ops.on || {}, attrs : ops }}
           v-model={o[k]}
-          compis={compis}
-        ></CommComp>
+          compis={compis}></CommComp>
       )
     }
   } else if ( typeof colItem.render === 'function' ) {
@@ -155,8 +160,7 @@ const handleFormatter = ( colItem, row, column, cellValue, index ) => {
             class='form-item-comp'
             {...{ on : ops.on || {}, attrs : ops }}
             v-model={o[k]}
-            compis={compis}
-          ></CommComp>
+            compis={compis}></CommComp>
         )
       }
     } else {

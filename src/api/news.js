@@ -61,3 +61,20 @@ export function uoloadImg( formData ) {
     type : 'upload'
   } )
 }
+// 置顶新闻
+export function setTopNews( data ) {
+  return http.request( {
+    method : 'post',
+    url : '/news/setTopNews',
+    data
+  } )
+}
+// 取消置顶新闻
+export function cancelTopNews( data ) {
+  return http.request( {
+    method : 'post',
+    url : '/news/cancelTopNews',
+    data
+  } )
+}
+

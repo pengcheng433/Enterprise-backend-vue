@@ -3,8 +3,8 @@
     <el-container>
       <el-main>
         <CustomForm :form-items="formItems" :form="form" :rules="formRules" ref="customFormref"></CustomForm>
-        <div class="flex justify-end">
-          <el-button type="primary" @click="submitForm">确定</el-button>
+        <div class="flex justify-Start pl-5">
+          <el-button type="primary" @click="submitForm" size="large">确定</el-button>
         </div>
       </el-main>
     </el-container>
@@ -72,6 +72,7 @@ const formItems = ref( [
     label : '文章内容',
     is : 'textarea'
   }
+
 ] )
 
 const searchform = reactive( {
@@ -111,4 +112,8 @@ const formRules = ref( {
 defineExpose( { tableItemSelectionRef, customFormPwd } )
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.pl-5{
+  padding-left: 97px;
+}
+</style>

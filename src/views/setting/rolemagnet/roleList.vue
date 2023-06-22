@@ -112,8 +112,7 @@ const openDialog = () => {
 // 批量删除数据
 const dels = row => {
   const arr = selectionTable.value.length > 0 ? selectionTable.value.map( item => item.id ) : [row.id]
-  console.log( arr )
-  if ( arr.length == 0 ) {
+  if ( arr.length == 0 || arr[arr.length - 1] == undefined ) {
     ElMessage.warning( '至少选中一条数据' )
     return
   }
