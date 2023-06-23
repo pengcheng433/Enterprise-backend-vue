@@ -42,8 +42,7 @@ const customFormPwd = ref( null )
 
 // 使用 reactive 创建响应式对象
 const list = reactive( {
-  list : [
-  ],
+  list : [],
   label : 'name',
   value : 'id'
 } )

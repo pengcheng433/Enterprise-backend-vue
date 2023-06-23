@@ -40,7 +40,14 @@ import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-import { addNewsCategory, getNewsCategoryList, getNewsCategoryById, updateNewsCategory, deleteNewsCategory, enableNewsCategory } from '@/api/newCategory'
+import {
+  addNewsCategory,
+  getNewsCategoryList,
+  getNewsCategoryById,
+  updateNewsCategory,
+  deleteNewsCategory,
+  enableNewsCategory
+} from '@/api/newCategory'
 import CustomTable from '@/components/DTable'
 import formatTime from '@/utils/fomattime'
 

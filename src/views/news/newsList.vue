@@ -46,8 +46,7 @@ onMounted( () => {
 } )
 
 const options = reactive( {
-  list : [
-  ]
+  list : []
 } )
 const getnewList = async() => {
   loading.value = true
