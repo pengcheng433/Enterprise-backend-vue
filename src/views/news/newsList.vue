@@ -6,7 +6,7 @@
           <div class="flex-row">
             <el-input class="w-50" v-model="searchform.search" placeholder="输入标题" />
             <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large">
-              <el-option v-for="item in options.list" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in options.list" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
             <el-button class="ml-2" :icon="Search" circle @click="getnewList" />
           </div>
@@ -31,8 +31,8 @@
 <script setup lang="jsx">
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-import { permissonTree } from '@/api/permisson'
 import { getNewsList, deleteNews, setTopNews, cancelTopNews, enableNews } from '@/api/news'
+import { getNewsCategorydic } from '@/api/newCategory'
 import CustomTable from '@/components/DTable'
 import formatTime from '@/utils/fomattime'
 
@@ -42,31 +42,11 @@ const router = useRouter()
 const loading = ref( false )
 onMounted( () => {
   getnewList()
-  getpermissonTree()
+  getNewsCategoryDicFun()
 } )
 
 const options = reactive( {
   list : [
-    {
-      value : 1,
-      label : 'Option1'
-    },
-    {
-      value : 2,
-      label : 'Option2'
-    },
-    {
-      value : 'Option3',
-      label : 'Option3'
-    },
-    {
-      value : 'Option4',
-      label : 'Option4'
-    },
-    {
-      value : 'Option5',
-      label : 'Option5'
-    }
   ]
 } )
 const getnewList = async() => {
@@ -75,9 +55,9 @@ const getnewList = async() => {
   loading.value = false
   tableData.value = data.data
 }
-const getpermissonTree = async() => {
-  const { data } = await permissonTree()
-  treeoption.data = data
+const getNewsCategoryDicFun = async() => {
+  const { data } = await getNewsCategorydic()
+  options.list = data
 }
 
 const tableData = ref( [] )
@@ -102,15 +82,14 @@ const tableColumns = ref( [
             fit='cover'
             z-index={10001}
             preview-src-list={[row.coverImage]}
-            preview-teleported={true}></el-image>{' '}
+            preview-teleported={true}
+          ></el-image>{' '}
         </div>
       )
     }
   },
 
-  { prop : 'category', label : '分类',
-    width : 150
-  },
+  { prop : 'category', label : '分类', width : 150 },
   { prop : 'views', label : '点击数' },
   {
     width : 120,
@@ -215,14 +194,6 @@ const dels = row => {
     }
   } )
 }
-
-const treeoption = reactive( {
-  data : [],
-  showCheckbox : true,
-  nodekey : 'id',
-  checked : '',
-  props : { children : 'children', label : 'name' }
-} )
 
 const searchform = reactive( {
   search : '',

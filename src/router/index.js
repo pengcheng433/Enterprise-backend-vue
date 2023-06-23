@@ -214,9 +214,9 @@ export const asyncRoutes = [
     children : [
       {
         path : 'newscategory',
-        component : () => import( '@/views/news/newsList.vue' ),
+        component : () => import( '@/views/news/newscategory.vue' ),
         name : 'newscategory',
-        meta : { title : '种类管理', noCache : true }
+        meta : { title : '分类管理', noCache : true }
       },
       {
         path : 'newlist',

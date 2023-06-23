@@ -17,11 +17,17 @@ import { roleList } from '@/api/role'
 import CustomForm from '@/components/DForm'
 import { ElMessage } from 'element-plus/lib'
 import { addNews } from '@/api/news'
+import { getNewsCategorydic } from '@/api/newCategory'
 
 onMounted( () => {
   getroleList()
+  getNewsCategoryDicFun()
 } )
 
+const getNewsCategoryDicFun = async() => {
+  const { data } = await getNewsCategorydic()
+  list.list = data
+}
 const getroleList = async() => {
   const { data } = await roleList( searchform )
   tableData.value = data
@@ -37,11 +43,9 @@ const customFormPwd = ref( null )
 // 使用 reactive 创建响应式对象
 const list = reactive( {
   list : [
-    { value : 1, label : '种类1' },
-    { value : 2, label : '种类2' }
   ],
-  label : 'label',
-  value : 'value'
+  label : 'name',
+  value : 'id'
 } )
 const formItems = ref( [
   {
@@ -72,7 +76,6 @@ const formItems = ref( [
     label : '文章内容',
     is : 'textarea'
   }
-
 ] )
 
 const searchform = reactive( {
@@ -113,7 +116,7 @@ defineExpose( { tableItemSelectionRef, customFormPwd } )
 </script>
 
 <style lang="scss" scoped>
-.pl-5{
+.pl-5 {
   padding-left: 97px;
 }
 </style>

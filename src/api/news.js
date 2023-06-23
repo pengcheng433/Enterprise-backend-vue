@@ -77,4 +77,3 @@ export function cancelTopNews( data ) {
     data
   } )
 }
-

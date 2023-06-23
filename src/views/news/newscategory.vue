@@ -5,10 +5,8 @@
         <el-row class="flex-row flex-between">
           <div class="flex-row">
             <el-input class="w-50" v-model="searchform.search" placeholder="输入标题" />
-            <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large">
-              <el-option v-for="item in options.list" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button class="ml-2" :icon="Search" circle @click="getnewList" />
+
+            <el-button class="ml-2" :icon="Search" circle @click="getNewsCategoryListFun" />
           </div>
           <div>
             <el-button type="primary" :icon="Plus" circle @click="gotoadd"></el-button>
@@ -25,59 +23,60 @@
         ></CustomTable>
       </el-main>
     </el-container>
+    <!-- 添加修改分类话框 -->
+    <CustomDialog v-model:visible="dialogVisible" :title="title" width="60%" destroy-on-close>
+      <div>
+        <CustomForm :form-items="formItems" :form="form" :rules="formRules" ref="customFormref"></CustomForm>
+        <div class="flex justify-end">
+          <el-button type="primary" @click="submitForm">确定</el-button>
+        </div>
+      </div>
+    </CustomDialog>
   </div>
 </template>
 
 <script setup lang="jsx">
+import CustomDialog from '@/components/DDialog'
+import CustomForm from '@/components/DForm'
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-import { permissonTree } from '@/api/permisson'
-import { getNewsList, deleteNews, setTopNews, cancelTopNews, enableNews } from '@/api/news'
+import { addNewsCategory, getNewsCategoryList, getNewsCategoryById, updateNewsCategory, deleteNewsCategory, enableNewsCategory } from '@/api/newCategory'
 import CustomTable from '@/components/DTable'
 import formatTime from '@/utils/fomattime'
 
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+
 const loading = ref( false )
 onMounted( () => {
-  getnewList()
-  getpermissonTree()
+  getNewsCategoryListFun()
+} )
+const title = computed( () => {
+  return form.id ? '修改分类' : '添加分类'
+} )
+const form = reactive( {
+  name : '',
+  description : ''
 } )
 
-const options = reactive( {
-  list : [
-    {
-      value : 1,
-      label : 'Option1'
-    },
-    {
-      value : 2,
-      label : 'Option2'
-    },
-    {
-      value : 'Option3',
-      label : 'Option3'
-    },
-    {
-      value : 'Option4',
-      label : 'Option4'
-    },
-    {
-      value : 'Option5',
-      label : 'Option5'
-    }
-  ]
-} )
-const getnewList = async() => {
+const formItems = ref( [
+  {
+    prop : 'name',
+    label : '分类名称',
+    rules : [{ required : true, message : '必须输入分类名称', trigger : 'blur' }]
+  },
+  {
+    prop : 'description',
+    label : '备注',
+    type : 'textarea'
+  }
+] )
+const dialogVisible = ref( false )
+
+const getNewsCategoryListFun = async() => {
   loading.value = true
-  const { data } = await getNewsList( searchform )
+  const { data } = await getNewsCategoryList( searchform )
   loading.value = false
-  tableData.value = data.data
-}
-const getpermissonTree = async() => {
-  const { data } = await permissonTree()
-  treeoption.data = data
+  tableData.value = data
 }
 
 const tableData = ref( [] )
@@ -90,30 +89,8 @@ const selectionTable = computed( () => {
 const tableColumns = ref( [
   { type : 'selection' },
   { prop : 'id', label : 'ID', width : 80 },
-  { prop : 'title', label : '标题' },
+  { prop : 'name', label : '标题' },
   {
-    prop : 'coverImage',
-    label : '封面预览',
-    render : row => {
-      return (
-        <div class='image-container-news'>
-          <el-image
-            src={row.coverImage}
-            fit='cover'
-            z-index={10001}
-            preview-src-list={[row.coverImage]}
-            preview-teleported={true}></el-image>{' '}
-        </div>
-      )
-    }
-  },
-
-  { prop : 'category', label : '分类',
-    width : 150
-  },
-  { prop : 'views', label : '点击数' },
-  {
-    width : 120,
     prop : 'state',
     label : '状态',
     render : row => {
@@ -121,10 +98,10 @@ const tableColumns = ref( [
     }
   },
   {
-    prop : 'publish_date',
-    label : '发布日期',
+    prop : 'created_time',
+    label : '创建日期',
     render : row => {
-      return <div>{formatTime( row.publish_date )}</div>
+      return <div>{formatTime( row.created_time )}</div>
     }
   },
   {
@@ -145,15 +122,7 @@ const tableColumns = ref( [
               启用
             </el-button>
           )}
-          {row.priority == 0 ? (
-            <el-button type='success' onClick={() => stickyFun( row )}>
-              置顶
-            </el-button>
-          ) : (
-            <el-button type='warning' onClick={() => cancelTopfun( row )}>
-              取消置顶
-            </el-button>
-          )}
+
           <el-button type='danger' onClick={() => dels( row )}>
             删除
           </el-button>
@@ -162,35 +131,46 @@ const tableColumns = ref( [
     }
   }
 ] )
-// 置顶
-const stickyFun = async row => {
-  const { id } = row
-  const res = await setTopNews( { newsId : id } )
-  if ( res.data ) {
-    ElMessage( {
-      type : 'success',
-      message : res.msg
-    } )
-    getnewList()
-  }
-}
-// 取消置顶
-const cancelTopfun = async row => {
-  const { id } = row
-  const res = await cancelTopNews( { newsId : id } )
-  if ( res.data ) {
-    ElMessage( {
-      type : 'success',
-      message : res.msg
-    } )
-    getnewList()
+const customFormref = ref( '' )
+const submitForm = async() => {
+  const flag = await customFormref.value.form.validate()
+  if ( flag ) {
+    if ( form.id ) {
+      // 编辑
+      const res = await updateNewsCategory( form )
+      if ( res.data ) {
+        ElMessage( {
+          message : res.msg,
+          type : 'success'
+        } )
+        dialogVisible.value = false
+        getNewsCategoryListFun()
+      }
+    } else {
+      // 添加
+      const res = await addNewsCategory( form )
+      if ( res.data ) {
+        ElMessage( {
+          message : res.msg,
+          type : 'success'
+        } )
+        dialogVisible.value = false
+        getNewsCategoryListFun()
+      } else {
+        ElMessage.error( res.msg )
+      }
+    }
   }
 }
 
 // 编辑
-const edit = row => {
-  router.push( { path : '/news/editNews', query : { id : row.id }} )
-  console.log( row )
+const edit = async row => {
+  const res = await getNewsCategoryById( { id : row.id } )
+  const { id, name, description } = res.data
+  form.id = id
+  form.name = name
+  form.description = description
+  dialogVisible.value = true
 }
 
 // 批量删除数据
@@ -200,64 +180,41 @@ const dels = row => {
     ElMessage.warning( '至少选中一条数据' )
     return
   }
-  ElMessageBox.confirm( `确定要删除这些选中文章吗吗`, {
+  ElMessageBox.confirm( `确定要删除这些选中分类吗吗`, {
     confirmButtonText : '确定',
     cancelButtonText : '取消',
     type : 'warning'
   } ).then( async() => {
-    const res = await deleteNews( { ids : arr } )
+    const res = await deleteNewsCategory( { ids : arr } )
     if ( res.code == 200 ) {
       ElMessage( {
         type : 'success',
         message : `删除成功`
       } )
-      getnewList()
+      getNewsCategoryListFun()
     }
   } )
 }
 
-const treeoption = reactive( {
-  data : [],
-  showCheckbox : true,
-  nodekey : 'id',
-  checked : '',
-  props : { children : 'children', label : 'name' }
-} )
-
 const searchform = reactive( {
-  search : '',
-  category : '',
-  pageSize : 10,
-  currentPage : 1
+  search : ''
 } )
 
 const changgestateFun = async row => {
-  console.log( row )
-  const { id, state } = row
-  const res = await enableNews( { id, enable : state } )
+  const { id } = row
+  const res = await enableNewsCategory( { id } )
   if ( res.data ) {
     ElMessage( {
       type : 'success',
       message : res.msg
     } )
-    getnewList()
+    getNewsCategoryListFun()
   }
 }
 const gotoadd = () => {
-  router.push( { path : '/news/addnews' } )
+  dialogVisible.value = true
 }
 defineExpose( { tableItemSelectionRef } )
 </script>
 
-<style lang="scss">
-.image-container-news {
-  width: 200px;
-  height: 200px;
-}
-.w-50 {
-  width: 12.5rem;
-}
-.ml-1 {
-  margin-left: 1rem;
-}
-</style>
+<style lang="scss"></style>
