@@ -7,6 +7,9 @@
     :destroy-on-close="destroyOnClose"
   >
     <slot></slot>
+     <template #footer>
+      <slot name="footer"></slot>
+    </template>
     <!-- <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleClose">Cancel</el-button>

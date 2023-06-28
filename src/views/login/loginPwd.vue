@@ -83,7 +83,7 @@
 
 <script setup>
 import { ref, onBeforeMount, reactive, computed } from 'vue'
-import { login, UserList } from '@/api/user'
+import { login } from '@/api/user' // UserList
 import { useUserStore } from '@/store'
 import { useRouter, useRoute } from 'vue-router'
 // import axios from 'axios'
@@ -149,6 +149,7 @@ async function freeLogin() {
   try {
     const token = 'token'
     userStore.SET_TOKEN( token )
+
     router.push( '/' )
   } catch ( e ) {
   } finally {
@@ -162,21 +163,32 @@ function loginHandle() {
     if ( valid ) {
       try {
         const params = {
-          userid : 'pengcheng433',
-          userpwd : 1
+          userid : '123456',
+          userpwd : '123456'
         }
+        // const params = {
+        //   userid : 'pengcheng433',
+        //   userpwd : '1'
+        // }
+        // const params = {
+        //   userid : '1231',
+        //   userpwd : '123456'
+        // }
         if ( showCaptcha.value ) {
           params.captchaId = captchaId.value
           params.captchaValue = formState.captcha
         }
         const res = await login( params )
+
         localStorage.setItem( 'token', res.data.token )
+        localStorage.setItem( 'uid', res.data.userid )
+        // const userListr = await UserList( { pagesize : 10, currentPage : 1 } )
+        console.log( res )
 
-        const userListr = await UserList( { pagesize : 10, currentPage : 1 } )
-        console.log( userListr )
-
-        // const { token } = data
+        userStore.SET_UID( res.data.userid )
         userStore.SET_TOKEN( res.data.token )
+        console.log( userStore )
+
         router.push( '/' )
       } catch ( e ) {
       } finally {

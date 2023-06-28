@@ -75,6 +75,15 @@ export function resetPassword( data ) {
   } )
 }
 
+// 获取销售
+export function getSalesUsers( data ) {
+  return http.request( {
+    method : 'get',
+    url : '/user/getSalesUsers',
+    data
+  } )
+}
+
 export function logout() {
   return http.request( {
     url : '/logout',

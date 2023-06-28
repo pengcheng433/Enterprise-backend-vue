@@ -5,7 +5,7 @@
         <el-row class="flex-row flex-between">
           <div class="flex-row">
             <el-input class="w-50" v-model="searchform.search" placeholder="输入标题" />
-            <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large">
+            <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large" clearable>
               <el-option v-for="item in options.list" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
             <el-button class="ml-2" :icon="Search" circle @click="getnewList" />
@@ -88,7 +88,12 @@ const tableColumns = ref( [
     }
   },
 
-  { prop : 'category', label : '分类', width : 150 },
+  { prop : 'category', label : '分类', width : 150,
+    render : row => {
+      const title = options.list.find( item => item.id == row.category ) || { name : '' }
+      return title.name
+    }
+  },
   { prop : 'views', label : '点击数' },
   {
     width : 120,

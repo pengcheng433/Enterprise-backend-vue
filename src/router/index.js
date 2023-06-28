@@ -239,6 +239,46 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path : '/products',
+    name : 'products',
+    component : Layout,
+    meta : { title : '产品中心', icon : 'about', noCache : true, roles : ['admin'] },
+    children : [
+      {
+        path : 'productscategory',
+        component : () => import( '@/views/products/productscategory.vue' ),
+        name : 'productscategory',
+        meta : { title : '产品分类', noCache : true }
+      },
+      {
+        path : 'productList',
+        component : () => import( '@/views/products/product.vue' ),
+        name : 'productList',
+        meta : { title : '产品列表', noCache : true }
+      }
+    ]
+  },
+  {
+    path : '/clients',
+    name : 'clients',
+    component : Layout,
+    meta : { title : '客户中心', icon : 'about', noCache : true, roles : ['admin'] },
+    children : [
+      {
+        path : 'clientsSeaList',
+        component : () => import( '@/views/clients/messageList.vue' ),
+        name : 'clientsSeaList',
+        meta : { title : '留言客户', noCache : true }
+      },
+      {
+        path : 'clientsList',
+        component : () => import( '@/views/clients/clientsList.vue' ),
+        name : 'clientsList',
+        meta : { title : '客户公海', noCache : true }
+      }
+    ]
+  },
   usermanger,
   {
     path : '/table',

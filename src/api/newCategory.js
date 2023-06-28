@@ -53,7 +53,7 @@ export function enableNewsCategory( data ) {
   } )
 }
 
-// 改变新闻分类状态
+// 新闻分类字典
 export function getNewsCategorydic( data ) {
   return http.request( {
     method : 'get',
