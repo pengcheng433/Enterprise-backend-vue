@@ -88,7 +88,10 @@ const tableColumns = ref( [
     }
   },
 
-  { prop : 'category', label : '分类', width : 150,
+  {
+    prop : 'category',
+    label : '分类',
+    width : 150,
     render : row => {
       const title = options.list.find( item => item.id == row.category ) || { name : '' }
       return title.name

@@ -7,7 +7,7 @@
     :destroy-on-close="destroyOnClose"
   >
     <slot></slot>
-     <template #footer>
+    <template #footer>
       <slot name="footer"></slot>
     </template>
     <!-- <template #footer>

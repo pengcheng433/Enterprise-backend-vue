@@ -200,7 +200,6 @@ const dels = row => {
 
 const searchform = reactive( {
   search : ''
-
 } )
 
 const changgestateFun = async row => {

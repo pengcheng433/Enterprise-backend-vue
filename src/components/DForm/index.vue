@@ -76,7 +76,12 @@
             <el-cascader v-model="formData[item.prop]" :options="item.options" clearable />
           </template>
           <template v-else-if="item.is === 'datetime'">
-            <el-date-picker v-model="formData[item.prop]" type="datetime" :placeholder="item.placeholder" format="YYYY/MM/DD HH:mm:ss" />
+            <el-date-picker
+              v-model="formData[item.prop]"
+              type="datetime"
+              :placeholder="item.placeholder"
+              format="YYYY/MM/DD HH:mm:ss"
+            />
           </template>
           <template v-else>
             <el-input
