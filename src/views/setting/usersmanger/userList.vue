@@ -29,11 +29,13 @@
     <!-- 密码重置对话框 -->
     <CustomDialog v-model:visible="resetVisible" :title="titlerest" width="20%">
       <CustomForm :form-items="formresetItem" :form="formreset" :rules="formPwdRules" ref="customFormPwd"></CustomForm>
-      <el-button type="primary" @click="resetPasswordFun">Submit</el-button>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="resetVisible = false">退出</el-button>
+          <el-button type="primary" @click="resetPasswordFun"> 确定 </el-button>
+        </span>
+      </template>
     </CustomDialog>
-
-    <el-button @click="openDialog">Open Dialog</el-button>
-    <el-button @click="closeDialog">Close Dialog</el-button>
   </div>
 </template>
 
@@ -215,10 +217,6 @@ const changgestateFun = row => {
       getuserList()
     }
   } )
-}
-
-const closeDialog = () => {
-  resetVisible.value = true
 }
 
 // 使用 reactive 创建响应式对象

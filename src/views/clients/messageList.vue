@@ -19,6 +19,18 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
+        <el-pagination
+          class="flex justify-end"
+          v-if="total > 10"
+          v-model:current-page="searchform.currentPage"
+          v-model:page-size="searchform.pagesize"
+          :background="true"
+          :page-sizes="[10, 25, 50, 100]"
+          layout="total,sizes, prev, pager, next"
+          :total="total"
+          @size-change="getMessageListFun"
+          @current-change="getMessageListFun"
+        />
       </el-main>
     </el-container>
   </div>
@@ -32,7 +44,6 @@ import { getContactUsList, addClientSea } from '@/api/contactUs'
 
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-import formatTime from '@/utils/fomattime'
 
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 
@@ -41,6 +52,7 @@ onMounted( () => {
   getMessageListFun()
   getProductsCategoryDicFun()
 } )
+const total = ref( '' )
 const options = reactive( {
   list : []
 } )
@@ -63,6 +75,7 @@ const getMessageListFun = async() => {
   console.log( data )
   loading.value = false
   tableData.value = data.data
+  total.value = data.total
 }
 
 const tableData = ref( [] )
@@ -100,10 +113,8 @@ const tableColumns = ref( [
   { prop : 'email', label : '邮箱号码' },
   {
     prop : 'created_at',
-    label : '留言日期',
-    render : row => {
-      return formatTime( row.created_at )
-    }
+    label : '留言日期'
+
   },
   { prop : 'companyName', label : '公司名称' },
   { prop : 'fax', label : '传真号码' },

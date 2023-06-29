@@ -115,7 +115,9 @@ const set = reactive( {
 // 退出登录
 const logout = async() => {
   await userStore.LOGIN_OUT()
-  localStorage.clear()
+  // localStorage.clear()
+  localStorage.removeItem( 'token' )
+  localStorage.removeItem( 'uid' )
   router.push( '/login' )
   window.location.reload()
 }

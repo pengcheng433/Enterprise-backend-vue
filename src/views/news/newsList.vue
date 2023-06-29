@@ -23,6 +23,18 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
+          <el-pagination
+          class="flex justify-end"
+          v-if="total > 10"
+          v-model:current-page="searchform.currentPage"
+          v-model:page-size="searchform.pageSize"
+          :background="true"
+          :page-sizes="[10, 25, 50, 100]"
+          layout="total,sizes, prev, pager, next"
+          :total="total"
+          @size-change="getnewList"
+          @current-change="getnewList"
+        />
       </el-main>
     </el-container>
   </div>
@@ -53,6 +65,7 @@ const getnewList = async() => {
   const { data } = await getNewsList( searchform )
   loading.value = false
   tableData.value = data.data
+  total.value = data.total
 }
 const getNewsCategoryDicFun = async() => {
   const { data } = await getNewsCategorydic()
@@ -202,6 +215,7 @@ const dels = row => {
   } )
 }
 
+const total = ref( 0 )
 const searchform = reactive( {
   search : '',
   category : '',

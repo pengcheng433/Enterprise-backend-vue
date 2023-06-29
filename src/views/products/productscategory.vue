@@ -97,7 +97,8 @@ const selectionTable = computed( () => {
 const tableColumns = ref( [
   { type : 'selection' },
   { prop : 'id', label : 'ID', width : 80 },
-  { prop : 'name', label : '分类' },
+  { prop : 'name', label : '分类名称' },
+  { prop : 'description', label : '备注' },
   {
     prop : 'state',
     label : '状态',

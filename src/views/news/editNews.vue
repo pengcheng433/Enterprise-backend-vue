@@ -3,9 +3,10 @@
     <el-container>
       <el-main>
         <CustomForm :form-items="formItems" :form="form" :rules="formRules" ref="customFormref"></CustomForm>
-        <div class="flex justify-end">
-          <el-button type="primary" @click="submitForm">确定</el-button>
+         <div class="flex justify-Start pl-5">
+          <el-button type="primary" @click="submitForm" size="large">确定</el-button>
         </div>
+
       </el-main>
     </el-container>
   </div>
@@ -17,7 +18,7 @@ import { roleList } from '@/api/role'
 import CustomForm from '@/components/DForm'
 import { ElMessage } from 'element-plus/lib'
 import { getNewsById, updateNews } from '@/api/news'
-
+import { getNewsCategorydic } from '@/api/newCategory'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const queryValue = ref( '' )
@@ -26,8 +27,12 @@ onMounted( () => {
   queryValue.value = query.id
   getroleList()
   getNewInfo()
+  getNewsCategoryDicFun()
 } )
-
+const getNewsCategoryDicFun = async() => {
+  const { data } = await getNewsCategorydic()
+  list.list = data
+}
 const getNewInfo = async() => {
   const res = await getNewsById( { id : queryValue.value } )
   const { id, title, category, coverImage, content, views } = res.data
@@ -35,7 +40,7 @@ const getNewInfo = async() => {
   form.title = title
   form.coverImage = coverImage
   form.views = views
-  form.category = category
+  form.category = parseInt( category )
   form.content = content
 }
 const getroleList = async() => {
@@ -52,11 +57,10 @@ const customFormref = ref( null )
 // 使用 reactive 创建响应式对象
 const list = reactive( {
   list : [
-    { value : 1, label : '种类1' },
-    { value : 2, label : '种类2' }
+
   ],
-  label : 'label',
-  value : 'value'
+  label : 'name',
+  value : 'id'
 } )
 const formItems = ref( [
   {
@@ -127,4 +131,8 @@ const formRules = ref( {
 defineExpose( { tableItemSelectionRef } )
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.pl-5 {
+  padding-left: 97px;
+}
+</style>

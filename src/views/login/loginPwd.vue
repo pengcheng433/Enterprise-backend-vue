@@ -6,7 +6,7 @@
         v-model="formState.account"
         class="h40"
         name="account"
-        placeholder="邮箱/手机"
+        placeholder="请输入账号"
         :clearable="true"
         tabindex="1"
         type="text"
@@ -64,19 +64,8 @@
         style="width: 100%"
         @click.prevent="loginHandle"
       >
-        快速登录
+        登录
       </el-button>
-
-      <el-link
-        type="primary"
-        :underline="false"
-        :loading="loading"
-        class=""
-        style="width: 100%; margin: 15px"
-        @click.prevent="freeLogin"
-      >
-        免登录
-      </el-link>
     </el-form-item>
   </el-form>
 </template>
@@ -85,10 +74,11 @@
 import { ref, onBeforeMount, reactive, computed } from 'vue'
 import { login } from '@/api/user' // UserList
 import { useUserStore } from '@/store'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus/lib'
+
 // import axios from 'axios'
 const router = useRouter()
-const route = useRoute()
 const userStore = useUserStore()
 
 const ruleForm = ref()
@@ -96,18 +86,16 @@ const trigger = ['blur', 'change']
 const formState = reactive( {
   country : '86',
   captcha : '',
-  account : 'admin',
-  password : 'admin9527'
+  account : '',
+  password : ''
 } )
 const rules = {
-  account : [{ required : true, message : '请输入手机或邮箱账号', trigger }],
-  password : [{ required : true, message : '请输入密码', trigger }],
-  captcha : [{ required : true, message : '请输入校验码', trigger }]
+  account : [{ required : true, message : '请输入账号', trigger }],
+  password : [{ required : true, message : '请输入密码', trigger }]
+  // captcha : [{ required : true, message : '请输入校验码', trigger }]
 }
-const bindToken = ref( '' )
 const showCaptcha = ref( false )
 const captchaImg = ref( '' )
-const captchaId = ref( '' )
 const loading = ref( false )
 
 const disabledLogin = computed( () => {
@@ -120,51 +108,21 @@ const disabledLogin = computed( () => {
 } )
 
 onBeforeMount( () => {
-  getQueryParams()
-} )
-
-function getQueryParams() {
-  const query = route.query
-  // 微信 登录
-  bindToken.value = query.bindToken || ''
-}
-
-// 图片验证码
-async function updateImage() {
-  // try {
-  //   const { code, data } = await request.getCaptcha()
-  //   if ( code == 200 ) {
-  //     const { captchaId, bs64 } = data
-  //     captchaImg.value = bs64
-  //     captchaId.value = captchaId
-  //   }
-  // } catch ( e ) {
-  //   captchaImg.value = ''
-  //   captchaId.value = ''
-  // }
-}
-
-async function freeLogin() {
-  loading.value = true
-  try {
-    const token = 'token'
-    userStore.SET_TOKEN( token )
-
-    router.push( '/' )
-  } catch ( e ) {
-  } finally {
-    loading.value = false
+  const useracount = localStorage.getItem( 'useracount' )
+  if ( useracount ) {
+    formState.account = useracount
   }
-}
+} )
 
 function loginHandle() {
   loading.value = true
   ruleForm.value.validate( async valid => {
+    console.log( valid )
     if ( valid ) {
       try {
         const params = {
-          userid : '123456',
-          userpwd : '123456'
+          userid : formState.account,
+          userpwd : formState.password
         }
         // const params = {
         //   userid : 'pengcheng433',
@@ -174,28 +132,28 @@ function loginHandle() {
         //   userid : '1231',
         //   userpwd : '123456'
         // }
-        if ( showCaptcha.value ) {
-          params.captchaId = captchaId.value
-          params.captchaValue = formState.captcha
-        }
+        // if ( showCaptcha.value ) {
+        //   params.captchaId = captchaId.value
+        //   params.captchaValue = formState.captcha
+        // }
         const res = await login( params )
-
+        if ( !res.data ) {
+          ElMessage.error( res.msg )
+          return
+        }
         localStorage.setItem( 'token', res.data.token )
         localStorage.setItem( 'uid', res.data.userid )
-        // const userListr = await UserList( { pagesize : 10, currentPage : 1 } )
-        console.log( res )
-
+        localStorage.setItem( 'useracount', res.data.useracount )
         userStore.SET_UID( res.data.userid )
         userStore.SET_TOKEN( res.data.token )
-        console.log( userStore )
-
         router.push( '/' )
       } catch ( e ) {
+        ElMessage.error( e )
       } finally {
         loading.value = false
-        if ( showCaptcha.value ) {
-          await updateImage()
-        }
+        // if ( showCaptcha.value ) {
+        //   await updateImage()
+        // }
       }
     }
   } )

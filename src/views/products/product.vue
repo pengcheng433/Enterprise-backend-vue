@@ -23,6 +23,18 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
+        <el-pagination
+          class="flex justify-end"
+          v-if="total > 10"
+          v-model:current-page="searchform.currentPage"
+          v-model:page-size="searchform.pagesize"
+          :background="true"
+          :page-sizes="[10, 25, 50, 100]"
+          layout="total,sizes, prev, pager, next"
+          :total="total"
+          @size-change="getProductsListFun"
+          @current-change="getProductsListFun"
+        />
       </el-main>
     </el-container>
     <!-- 添加修改产品话框 -->
@@ -46,7 +58,7 @@ import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
 import { addProduct, getProductList, getProductById, updateProduct, deleteProduct, enableProduct } from '@/api/product'
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-import formatTime from '@/utils/fomattime'
+// import formatTime from '@/utils/fomattime'
 
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 
@@ -119,6 +131,7 @@ const getProductsListFun = async() => {
   const { data } = await getProductList( searchform )
   loading.value = false
   tableData.value = data.data
+  total.value = data.total
 }
 
 const tableData = ref( [] )
@@ -146,8 +159,7 @@ const tableColumns = ref( [
               fit='cover'
               z-index={10001}
               preview-src-list={[row.conver_img]}
-              preview-teleported={true}
-            ></el-image>
+              preview-teleported={true}></el-image>
           ) : (
             '无'
           )}
@@ -165,17 +177,11 @@ const tableColumns = ref( [
   },
   {
     prop : 'created_at',
-    label : '创建时间',
-    render : row => {
-      return <div>{formatTime( row.created_at )}</div>
-    }
+    label : '创建时间'
   },
   {
     prop : 'updated_at',
-    label : '修改时间',
-    render : row => {
-      return <div>{formatTime( row.updated_at )}</div>
-    }
+    label : '修改时间'
   },
   {
     width : 120,
@@ -280,7 +286,7 @@ const dels = row => {
     }
   } )
 }
-
+const total = ref( 0 )
 const searchform = reactive( {
   search : '',
   category : '',

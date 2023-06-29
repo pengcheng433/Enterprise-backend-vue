@@ -33,6 +33,18 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
+          <el-pagination
+          class="flex justify-end"
+          v-if="total > 10"
+          v-model:current-page="searchform.currentPage"
+          v-model:page-size="searchform.pagesize"
+          :background="true"
+          :page-sizes="[10, 25, 50, 100]"
+          layout="total,sizes, prev, pager, next"
+          :total="total"
+          @size-change="getClientListFun"
+          @current-change="getClientListFun"
+        />
       </el-main>
     </el-container>
     <!-- 添加修改客户话框 -->
@@ -176,7 +188,7 @@ import { ref, onMounted, computed, defineExpose, reactive, watch } from 'vue'
 import { getSalesUsers } from '@/api/user'
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-import formatTime from '@/utils/fomattime'
+// import formatTime from '@/utils/fomattime'
 import {
   getClientList,
   addClient,
@@ -473,6 +485,7 @@ const getClientListFun = async() => {
   const { data } = await getClientList( searchform )
   loading.value = false
   tableData.value = data.data
+  total.value = data.total
 }
 
 const tableData = ref( [] )
@@ -545,35 +558,27 @@ const tableColumns = ref( [
   {
     width : 170,
     prop : 'updated_at',
-    label : '下次联系时间',
-    render : row => {
-      return <div>{formatTime( row.updated_at )}</div>
-    }
+    label : '下次联系时间'
+
   },
   {
     width : 170,
     prop : 'created_at',
-    label : '创建时间',
-    render : row => {
-      return <div>{formatTime( row.created_at )}</div>
-    }
+    label : '创建时间'
+
   },
 
   {
     width : 170,
     prop : 'updated_at',
-    label : '客户分配时间',
-    render : row => {
-      return <div>{formatTime( row.updated_at )}</div>
-    }
+    label : '客户分配时间'
+
   },
   {
     width : 170,
     prop : 'updated_at',
-    label : '最后联系时间',
-    render : row => {
-      return <div>{formatTime( row.updated_at )}</div>
-    }
+    label : '最后联系时间'
+
   },
 
   {
@@ -724,6 +729,7 @@ const edit = async row => {
   dialogVisible.value = true
 }
 
+const total = ref( '' )
 const searchform = reactive( {
   search : '',
   status : '',

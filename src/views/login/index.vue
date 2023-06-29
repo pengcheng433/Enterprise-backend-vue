@@ -8,10 +8,10 @@
       <div class="main">
         <login-pwd />
         <div class="foot-link clearFix" />
-        <div v-if="isShowWX" class="foot-link">
+        <!-- <div v-if="isShowWX" class="foot-link">
           <el-divider content-position="center">其他方式登录</el-divider>
           <we-chat-login />
-        </div>
+        </div> -->
       </div>
     </div>
     <yu-copyright />
@@ -26,7 +26,7 @@ import { debounce } from 'lodash-unified'
 
 import YuCopyright from '@/components/YuCopyright'
 import Logo from './components/logo.vue'
-import WeChatLogin from './components/weChatLogin'
+// import WeChatLogin from './components/weChatLogin'
 import LoginPwd from './loginPwd.vue'
 
 const isShowWX = ref( true )
