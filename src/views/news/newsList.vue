@@ -23,7 +23,7 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
-          <el-pagination
+        <el-pagination
           class="flex justify-end"
           v-if="total > 10"
           v-model:current-page="searchform.currentPage"

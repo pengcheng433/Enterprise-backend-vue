@@ -114,7 +114,6 @@ const tableColumns = ref( [
   {
     prop : 'created_at',
     label : '留言日期'
-
   },
   { prop : 'companyName', label : '公司名称' },
   { prop : 'fax', label : '传真号码' },

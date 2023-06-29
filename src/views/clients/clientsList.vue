@@ -33,7 +33,7 @@
           :table-data="tableData"
           :table-title="tableColumns"
         ></CustomTable>
-          <el-pagination
+        <el-pagination
           class="flex justify-end"
           v-if="total > 10"
           v-model:current-page="searchform.currentPage"
@@ -559,26 +559,22 @@ const tableColumns = ref( [
     width : 170,
     prop : 'updated_at',
     label : '下次联系时间'
-
   },
   {
     width : 170,
     prop : 'created_at',
     label : '创建时间'
-
   },
 
   {
     width : 170,
     prop : 'updated_at',
     label : '客户分配时间'
-
   },
   {
     width : 170,
     prop : 'updated_at',
     label : '最后联系时间'
-
   },
 
   {

@@ -3,10 +3,9 @@
     <el-container>
       <el-main>
         <CustomForm :form-items="formItems" :form="form" :rules="formRules" ref="customFormref"></CustomForm>
-         <div class="flex justify-Start pl-5">
+        <div class="flex justify-Start pl-5">
           <el-button type="primary" @click="submitForm" size="large">确定</el-button>
         </div>
-
       </el-main>
     </el-container>
   </div>
@@ -56,9 +55,7 @@ const customFormref = ref( null )
 
 // 使用 reactive 创建响应式对象
 const list = reactive( {
-  list : [
-
-  ],
+  list : [],
   label : 'name',
   value : 'id'
 } )

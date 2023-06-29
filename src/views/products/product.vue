@@ -159,7 +159,8 @@ const tableColumns = ref( [
               fit='cover'
               z-index={10001}
               preview-src-list={[row.conver_img]}
-              preview-teleported={true}></el-image>
+              preview-teleported={true}
+            ></el-image>
           ) : (
             '无'
           )}
