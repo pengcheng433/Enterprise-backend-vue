@@ -1,4 +1,25 @@
 /* eslint-disable */
+
+
+
+const handleDownload = () => {
+  downloadLoading.value = true
+  import( '@/vendor/Export2Excel' ).then( excel => {
+    const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+    const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+    const data = formatJson( filterVal )
+    excel.export_json_to_excel( {
+      header : tHeader,
+      data,
+      filename : 'table-list'
+    } )
+    downloadLoading.value = false
+  } )
+}
+
+
+
+
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 function generateArray(table) {

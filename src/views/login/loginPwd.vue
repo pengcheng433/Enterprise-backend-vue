@@ -87,7 +87,7 @@ const formState = reactive( {
   country : '86',
   captcha : '',
   account : '',
-  password : ''
+  password : '123456Sb'
 } )
 const rules = {
   account : [{ required : true, message : '请输入账号', trigger }],
@@ -124,14 +124,7 @@ function loginHandle() {
           userid : formState.account,
           userpwd : formState.password
         }
-        // const params = {
-        //   userid : 'pengcheng433',
-        //   userpwd : '1'
-        // }
-        // const params = {
-        //   userid : '1231',
-        //   userpwd : '123456'
-        // }
+
         // if ( showCaptcha.value ) {
         //   params.captchaId = captchaId.value
         //   params.captchaValue = formState.captcha
@@ -146,6 +139,7 @@ function loginHandle() {
         localStorage.setItem( 'useracount', res.data.useracount )
         userStore.SET_UID( res.data.userid )
         userStore.SET_TOKEN( res.data.token )
+        userStore.SET_NAME( res.data.username )
         router.push( '/' )
       } catch ( e ) {
         ElMessage.error( e )

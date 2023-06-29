@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import { compile } from 'path-to-regexp'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -38,9 +37,6 @@ const getBreadcrumb = () => {
 }
 
 const pathCompile = path => {
-  const { params } = route
-  const toPath = compile( path )
-  return toPath( params )
 }
 
 const handleLink = item => {

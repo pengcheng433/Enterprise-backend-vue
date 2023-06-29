@@ -125,7 +125,7 @@ const tableColumns = ref( [
     label : '操作',
     render : row => {
       return (
-        <div>
+        <div class='flex'>
           <el-button type='primary' onClick={() => edit( row )}>
             编辑
           </el-button>

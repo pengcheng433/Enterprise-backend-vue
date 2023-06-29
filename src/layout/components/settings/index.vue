@@ -6,31 +6,6 @@
       </template>
       <template #default>
         <div>
-          <el-divider content-position="center">系统配置</el-divider>
-
-          <div class="drawer-item">
-            <span>开启 TagsView</span>
-            <el-switch v-model="set.tagsView" inline-prompt class="drawer-switch" active-text="开" inactive-text="关" />
-          </div>
-          <!-- <div class="drawer-item">
-            <span>固定 Header</span>
-            <el-switch
-                v-model="set.fixedHeader"
-                inline-prompt
-                class="drawer-switch"
-                active-text="开"
-                inactive-text="关" />
-          </div>-->
-          <div class="drawer-item">
-            <span>侧边栏 Logo</span>
-            <el-switch
-              v-model="set.sidebarLogo"
-              inline-prompt
-              class="drawer-switch"
-              active-text="开"
-              inactive-text="关"
-            />
-          </div>
 
           <el-divider content-position="center">布局模式</el-divider>
 
@@ -61,15 +36,7 @@
           </div>
         </div>
       </template>
-      <template #footer>
-        <div style="flex: auto">
-          <el-alert type="success">
-            <template #title>
-              <el-link type="primary" href="https://github.com/mvpyb/vite-element-admin">点我前往github</el-link>
-            </template>
-          </el-alert>
-        </div>
-      </template>
+
     </el-drawer>
   </div>
 </template>

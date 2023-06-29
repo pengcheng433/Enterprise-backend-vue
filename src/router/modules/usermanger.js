@@ -30,21 +30,13 @@ export default {
         noCache : false
       }
     },
-    {
-      path : 'menumanger',
-      name : 'menumanger',
-      component : () => import( '@/views/nested/menu2/index.vue' ),
-      meta : {
-        title : '菜单管理',
-        noCache : false
-      }
-    },
+
     {
       path : 'person',
       name : 'person',
-      component : () => import( '@/views/nested/menu2/index.vue' ),
+      component : () => import( '@/views/page/userCenter/loginHistory.vue' ),
       meta : {
-        title : '个人设置',
+        title : '登录历史',
         noCache : false
       }
     }

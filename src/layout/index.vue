@@ -15,6 +15,10 @@
         </div>
         <AppMain :need-tags-view="set.needTagsView" />
         <Settings />
+           <!-- v-waterMarker="{
+            text: '小灰灰版权所有',
+            textColor: 'rgba(239,53,54,0.4)',
+          }" -->
       </div>
     </div>
   </div>

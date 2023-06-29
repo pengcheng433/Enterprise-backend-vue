@@ -12,9 +12,9 @@ const useUserStore = defineStore( {
       token : cookies.get( TOKEN ),
       uid : null,
       avatar : AVATAR,
-      name : '灰是小灰灰的灰',
-      phone : '15988888888',
-      email : '454539387@qq.com',
+      name : '',
+      phone : '',
+      email : '',
       identity : '',
       roles : ['admin']
     }
@@ -67,6 +67,9 @@ const useUserStore = defineStore( {
     },
     async SET_UID( uid ) {
       this.uid = uid
+    },
+    async SET_NAME( name ) {
+      this.name = name
     },
     // 清空所有登录信息
     RESET_INFO() {

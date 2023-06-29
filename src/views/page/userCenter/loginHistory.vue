@@ -1,10 +1,10 @@
 <template>
   <LoginHistory title="登录历史">
     <template #head>
-      <div class="card-title flex-row flex-vertical-center">
+      <!-- <div class="card-title flex-row flex-vertical-center">
         <span>以下是您最近4个月的登录历史，如有异常请尽快</span>
         <el-link type="primary" :underline="false">修改密码</el-link>
-      </div>
+      </div> -->
     </template>
     <template #body>
       <!-- Element 虚拟表格-->
@@ -26,7 +26,6 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { loginHistory } from '@/api/user'
 import LoginHistory from './components/infoLayout'
 
 const loading = ref( false )
@@ -78,20 +77,12 @@ const columns = ref( [
     width : 231
   }
 ] )
-const tableData = ref( [] )
+const tableData = ref( [{ loginTime : 1 }] )
 
 const getHistory = async() => {
   loading.value = true
-  try {
-    // 模拟了10w条数据，使用element 虚拟表格渲染
-    const { code, data } = await loginHistory()
-    if ( code == 200 ) {
-      tableData.value = data
-    }
-  } catch ( e ) {
-  } finally {
-    loading.value = false
-  }
+
+  loading.value = false
 }
 getHistory()
 

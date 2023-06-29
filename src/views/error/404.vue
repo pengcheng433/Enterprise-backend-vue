@@ -9,10 +9,10 @@
       </div>
       <div class="bullshit">
         <div class="bullshit__oops">OOPS!</div>
-        <div class="bullshit__info">
+        <!-- <div class="bullshit__info">
           版权所有
           <a style="color: #20a0ff" href="https://wallstreetcn.com" target="_blank">wallstreetcn</a>
-        </div>
+        </div> -->
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请检查您输入的URL是否正确，或单击下面的按钮返回主页。</div>
         <el-link type="primary" :underline="false" @click="back" class="bullshit__return-home">返回主页</el-link>

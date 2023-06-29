@@ -7,7 +7,7 @@
             <el-select
               v-model="searchform.type"
               class="ml-2"
-              placeholder="Select"
+              placeholder=""
               size="large"
               @change="getClientListFun"
             >
@@ -15,7 +15,7 @@
               <el-option label="我的客户" value="1" key="1" />
             </el-select>
             <el-input class="w-50 ml-2" v-model="searchform.search" placeholder="输入客户名称&手机&邮箱&公司名" />
-            <el-select v-model="searchform.status" class="ml-2" placeholder="Select" size="large" clearable>
+            <el-select v-model="searchform.status" class="ml-2" placeholder="客户类型" size="large" clearable>
               <el-option v-for="item in list1.list" :key="item" :label="item.name" :value="item.id" />
             </el-select>
             <el-button class="ml-2" :icon="Search" circle @click="getClientListFun" />
