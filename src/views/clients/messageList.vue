@@ -8,7 +8,7 @@
             <el-button class="ml-2" :icon="Search" circle @click="getMessageListFun" />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="addSea"></el-button>
+            <el-button type="primary" :icon="Plus" circle @click="addSea" v-haspermission="'addClientSea'"></el-button>
           </div>
         </el-row>
       </el-header>
@@ -39,14 +39,12 @@
 <script setup lang="jsx">
 import { Plus, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-
+import { useUserStore } from '@/store'
 import { getContactUsList, addClientSea } from '@/api/contactUs'
-
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-
+const userStore = useUserStore()
 const loading = ref( false )
 onMounted( () => {
   getMessageListFun()
@@ -70,12 +68,15 @@ const getProductsCategoryDicFun = async() => {
 }
 
 const getMessageListFun = async() => {
-  loading.value = true
-  const { data } = await getContactUsList( searchform )
-  console.log( data )
-  loading.value = false
-  tableData.value = data.data
-  total.value = data.total
+  const flag = await userStore.hasPermission( 'getContactUsList' )
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getContactUsList( searchform )
+    console.log( data )
+    loading.value = false
+    tableData.value = data.data
+    total.value = data.total
+  }
 }
 
 const tableData = ref( [] )
@@ -125,7 +126,7 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => addSea( row )}>
+          <el-button type='primary' onClick={() => addSea( row )} v-haspermission={'addClientSea'}>
             加入客户公海
           </el-button>
         </div>

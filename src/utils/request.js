@@ -53,6 +53,7 @@ class HttpRequest {
   }
 
   checkStatus( status ) {
+    console.log( status )
     let errMessage = ''
     switch ( status ) {
       case 400:
@@ -132,6 +133,7 @@ class HttpRequest {
     // 响应拦截
     instance.interceptors.response.use(
       res => {
+        console.log( res )
         const result = res.data
         const type = Object.prototype.toString.call( result )
 
@@ -143,7 +145,6 @@ class HttpRequest {
 
           const isErrorToken = LOGIN_ERROR_CODE.find( item => item.code == code )
           const isWhiteCode = WHITE_CODE_LIST.find( item => item.code == code )
-
           const userStore = useUserStore()
 
           if ( isErrorToken ) {
@@ -158,6 +159,13 @@ class HttpRequest {
               duration : 3 * 1000
             } )
             return Promise.reject( new Error( message || 'Error' ) )
+          } else if ( code == 5005 ) {
+            ElMessage( {
+              message : result.msg,
+              type : 'error',
+              duration : 3 * 1000
+            } )
+            return result
           } else {
             return result
           }

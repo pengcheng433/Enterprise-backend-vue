@@ -8,11 +8,11 @@
             <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large" clearable>
               <el-option v-for="item in options.list" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <el-button class="ml-2" :icon="Search" circle @click="getnewList" />
+            <el-button class="ml-2" :icon="Search" circle @click="getnewList" v-haspermission="'getNewsList'" />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="gotoadd"></el-button>
-            <el-button type="danger" :icon="Delete" circle @click="dels"></el-button>
+            <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addNews'"></el-button>
+            <el-button type="danger" :icon="Delete" circle @click="dels" v-haspermission="'deleteNews'"></el-button>
           </div>
         </el-row>
       </el-header>
@@ -46,10 +46,10 @@ import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
 import { getNewsList, deleteNews, setTopNews, cancelTopNews, enableNews } from '@/api/news'
 import { getNewsCategorydic } from '@/api/newCategory'
 import CustomTable from '@/components/DTable'
-import formatTime from '@/utils/fomattime'
-
+import { useUserStore } from '@/store'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 import { useRouter } from 'vue-router'
+const userStore = useUserStore()
 const router = useRouter()
 const loading = ref( false )
 onMounted( () => {
@@ -61,11 +61,14 @@ const options = reactive( {
   list : []
 } )
 const getnewList = async() => {
-  loading.value = true
-  const { data } = await getNewsList( searchform )
-  loading.value = false
-  tableData.value = data.data
-  total.value = data.total
+  const flag = await userStore.hasPermission( 'getNewsList' )
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getNewsList( searchform )
+    loading.value = false
+    tableData.value = data.data
+    total.value = data.total
+  }
 }
 const getNewsCategoryDicFun = async() => {
   const { data } = await getNewsCategorydic()
@@ -94,8 +97,7 @@ const tableColumns = ref( [
             fit='cover'
             z-index={10001}
             preview-src-list={[row.coverImage]}
-            preview-teleported={true}
-          ></el-image>{' '}
+            preview-teleported={true}></el-image>{' '}
         </div>
       )
     }
@@ -121,10 +123,7 @@ const tableColumns = ref( [
   },
   {
     prop : 'publish_date',
-    label : '发布日期',
-    render : row => {
-      return <div>{formatTime( row.publish_date )}</div>
-    }
+    label : '发布日期'
   },
   {
     prop : 'setting',
@@ -132,28 +131,28 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'getNewsById'}>
             编辑
           </el-button>
           {row.state == 1 ? (
-            <el-button type='warning' onClick={() => changgestateFun( row )}>
+            <el-button type='warning' onClick={() => changgestateFun( row )} v-haspermission={'enableNews'}>
               禁用
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => changgestateFun( row )}>
+            <el-button type='success' onClick={() => changgestateFun( row )} v-haspermission={'enableNews'}>
               启用
             </el-button>
           )}
           {row.priority == 0 ? (
-            <el-button type='success' onClick={() => stickyFun( row )}>
+            <el-button type='success' onClick={() => stickyFun( row )} v-haspermission={'setTopNews'}>
               置顶
             </el-button>
           ) : (
-            <el-button type='warning' onClick={() => cancelTopfun( row )}>
+            <el-button type='warning' onClick={() => cancelTopfun( row )} v-haspermission={'cancelTopNews'}>
               取消置顶
             </el-button>
           )}
-          <el-button type='danger' onClick={() => dels( row )}>
+          <el-button type='danger' onClick={() => dels( row )} v-haspermission={'deleteNews'}>
             删除
           </el-button>
         </div>

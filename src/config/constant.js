@@ -27,6 +27,10 @@ export const WHITE_CODE_LIST = [
   {
     code : 5006,
     msg : '验证码错误或已过期'
+  },
+  {
+    code : 5005,
+    msg : '没有访问权限'
   }
 ]
 
@@ -36,3 +40,6 @@ export const LOGIN_ERROR_CODE = [
     msg : '无效token'
   }
 ]
+
+export const DOMAIN_REAL = 'http://localhost:3031'
+

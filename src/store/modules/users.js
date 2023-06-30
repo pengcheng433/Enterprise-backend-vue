@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import cookies from '@/utils/cookies'
-import { TOKEN, AVATAR } from '@/config/constant'
-import { getInfo } from '@/api/user' // logout,
+import { TOKEN } from '@/config/constant'
+// import { getInfo } from '@/api/user' // logout,
 import { resetRouter } from '@/router'
 import useTagsViewStore from './tagsView'
 
@@ -11,14 +11,16 @@ const useUserStore = defineStore( {
     return {
       token : cookies.get( TOKEN ),
       uid : null,
-      avatar : AVATAR,
+      avatar : 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
       name : '',
       phone : '',
       email : '',
       identity : '',
-      roles : ['admin']
+      roles : ['admin'],
+      permission : []
     }
   },
+  persist : true,
   actions : {
     SET_TOKEN( token = '' ) {
       token ? cookies.set( TOKEN, token ) : cookies.remove( TOKEN )
@@ -26,24 +28,23 @@ const useUserStore = defineStore( {
     },
     async GET_USER_INFO() {
       try {
-        const { code, data } = await getInfo()
+        // const { code, data } = await getInfo()
 
-        if ( code == 200 ) {
-          const { id, name, avatar, roles, phone, email, identity } = data
-          this.uid = id || ''
-          this.name = name || ''
-          this.phone = phone || ''
-          this.email = email || ''
-          this.identity = identity || ''
-          this.avatar = avatar || AVATAR
-          this.roles = roles || ['editor']
-          localStorage.setItem( 'uid', this.uid )
-          return {
-            ...data,
-            uid : this.uid,
-            roles : this.roles
-          }
-        }
+        // if ( code == 200 ) {
+        //   const { id, name, roles, phone, email, identity } = data
+        //   this.uid = id || ''
+        //   this.name = name || ''
+        //   this.phone = phone || ''
+        //   this.email = email || ''
+        //   this.identity = identity || ''
+        //   this.roles = roles || ['editor']
+        //   localStorage.setItem( 'uid', this.uid )
+        //   return {
+        //     ...data,
+        //     uid : this.uid,
+        //     roles : this.roles
+        //   }
+        // }
       } catch ( error ) {
         return error
       }
@@ -70,6 +71,17 @@ const useUserStore = defineStore( {
     },
     async SET_NAME( name ) {
       this.name = name
+    },
+    async SET_PERMIT( arr ) {
+      this.permission = arr
+    },
+
+    // 判断是否存在
+    async hasPermission( str ) {
+      // return true
+      return await new Promise( ( resolve ) => {
+        resolve( this.permission.includes( str ) )
+      } )
     },
     // 清空所有登录信息
     RESET_INFO() {

@@ -6,11 +6,29 @@
           <div class="flex-row">
             <el-input class="w-50" v-model="searchform.search" placeholder="输入标题" />
 
-            <el-button class="ml-2" :icon="Search" circle @click="getNewsCategoryListFun" />
+            <el-button
+              class="ml-2"
+              :icon="Search"
+              circle
+              @click="getNewsCategoryListFun"
+              v-haspermission="'getNewsCategoryList'"
+            />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="gotoadd"></el-button>
-            <el-button type="danger" :icon="Delete" circle @click="dels"></el-button>
+            <el-button
+              type="primary"
+              :icon="Plus"
+              circle
+              @click="gotoadd"
+              v-haspermission="'addNewsCategory'"
+            ></el-button>
+            <el-button
+              type="danger"
+              :icon="Delete"
+              circle
+              @click="dels"
+              v-haspermission="'deleteNewsCategory'"
+            ></el-button>
           </div>
         </el-row>
       </el-header>
@@ -49,10 +67,9 @@ import {
   enableNewsCategory
 } from '@/api/newCategory'
 import CustomTable from '@/components/DTable'
-import formatTime from '@/utils/fomattime'
-
+import { useUserStore } from '@/store'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-
+const userStore = useUserStore()
 const loading = ref( false )
 onMounted( () => {
   getNewsCategoryListFun()
@@ -80,10 +97,14 @@ const formItems = ref( [
 const dialogVisible = ref( false )
 
 const getNewsCategoryListFun = async() => {
-  loading.value = true
-  const { data } = await getNewsCategoryList( searchform )
-  loading.value = false
-  tableData.value = data
+  const flag = await userStore.hasPermission( 'getNewsCategoryList' )
+  console.log( flag )
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getNewsCategoryList( searchform )
+    loading.value = false
+    tableData.value = data
+  }
 }
 
 const tableData = ref( [] )
@@ -106,10 +127,7 @@ const tableColumns = ref( [
   },
   {
     prop : 'created_time',
-    label : '创建日期',
-    render : row => {
-      return <div>{formatTime( row.created_time )}</div>
-    }
+    label : '创建日期'
   },
   {
     prop : 'setting',
@@ -117,20 +135,20 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'getNewsCategoryById'}>
             编辑
           </el-button>
           {row.state == 1 ? (
-            <el-button type='warning' onClick={() => changgestateFun( row )}>
+            <el-button type='warning' onClick={() => changgestateFun( row )} v-haspermission={'enableNewsCategory'}>
               禁用
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => changgestateFun( row )}>
+            <el-button type='success' onClick={() => changgestateFun( row )} v-haspermission={'enableNewsCategory'}>
               启用
             </el-button>
           )}
 
-          <el-button type='danger' onClick={() => dels( row )}>
+          <el-button type='danger' onClick={() => dels( row )} v-haspermission={'deleteNewsCategory'}>
             删除
           </el-button>
         </div>

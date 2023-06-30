@@ -8,8 +8,8 @@
             <el-button class="ml-2" :icon="Search" circle @click="getuserList" />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="openDialog"></el-button>
-            <el-button type="danger" :icon="Delete" circle @click="dels"></el-button>
+            <el-button type="primary" :icon="Plus" circle @click="openDialog" v-haspermission="'addUser'"></el-button>
+            <el-button type="danger" :icon="Delete" circle @click="dels" v-haspermission="'delsUser'"></el-button>
           </div>
         </el-row>
       </el-header>
@@ -32,7 +32,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="resetVisible = false">退出</el-button>
-          <el-button type="primary" @click="resetPasswordFun"> 确定 </el-button>
+          <el-button type="primary" @click="resetPasswordFun" v-haspermission="'resetPassword'"> 确定 </el-button>
         </span>
       </template>
     </CustomDialog>
@@ -44,19 +44,17 @@ import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
 import { UserList, resetPassword, changgestate, adduser, finduserinfo, updateUser, delUser } from '@/api/user'
 import { roleList } from '@/api/role'
-
 import CustomTable from '@/components/DTable'
 import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
-import formatTime from '@/utils/fomattime'
 import { transformArray } from '@/utils/formeData'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-
+import { useUserStore } from '@/store'
 onMounted( () => {
   getDicList()
   getuserList()
 } )
-
+const userStore = useUserStore()
 const getDicList = async() => {
   const list = await roleList( { search : '' } )
   console.log( list )
@@ -64,9 +62,11 @@ const getDicList = async() => {
   rolelist.list = rolelist.list.filter( item => item.id !== 1 )
 }
 const getuserList = async() => {
-  const userListr = await UserList( searchform )
-  console.log( 'userListr:', userListr )
-  tableData.value = userListr?.data?.data || []
+  const flag = await userStore.hasPermission( 'getUser' )
+  if ( flag ) {
+    const userListr = await UserList( searchform )
+    tableData.value = userListr?.data?.data || []
+  }
 }
 
 const tableData = ref( [] )
@@ -115,10 +115,7 @@ const tableColumns = ref( [
   },
   {
     prop : 'lastlogintime',
-    label : '登陆时间',
-    render : row => {
-      return <div>{formatTime( row.lastlogintime )}</div>
-    }
+    label : '登陆时间'
   },
   {
     prop : 'setting',
@@ -126,19 +123,19 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'finduserinfo'}>
             编辑
           </el-button>
           {row.state == 1 ? (
-            <el-button type='warning' onClick={() => changgestateFun( row )}>
+            <el-button type='warning' onClick={() => changgestateFun( row )} v-haspermission={'changuserstate'}>
               禁用
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => changgestateFun( row )}>
+            <el-button type='success' onClick={() => changgestateFun( row )} v-haspermission={'changuserstate'}>
               启用
             </el-button>
           )}
-          <el-button type='info' onClick={() => openreest( row )}>
+          <el-button type='info' onClick={() => openreest( row )} v-haspermission={'resetPassword'}>
             {' '}
             密码重置{' '}
           </el-button>
@@ -159,7 +156,6 @@ const title = computed( () => {
 const titlerest = ref( '重置密码' )
 const openDialog = () => {
   delete form.userid
-
   form.name = '' // 根据需要进行赋值
   form.email = '' // 根据需要进行赋值
   // form.pwd = '' // 根据需要进行赋值
@@ -176,7 +172,6 @@ const dels = () => {
     return
   }
   const arr = selectionTable.value.map( item => item.userid )
-  console.log( arr )
 
   ElMessageBox.confirm( `确定要删除这些选中账户吗`, {
     confirmButtonText : '确定',
@@ -195,9 +190,7 @@ const dels = () => {
 }
 // 打开密码重置对话框
 const openreest = row => {
-  console.log( row )
   formreset.userid = row.userid
-  console.log( formreset )
   resetVisible.value = true
 }
 // 改变状态
@@ -277,7 +270,6 @@ const validatePass = ( rule, value, callback ) => {
   }
 }
 const validatePass2 = ( rule, value, callback ) => {
-  console.log( formreset.pwdagagin )
   if ( formreset.pwdagagin === '' ) {
     callback( new Error( '输入二次密码' ) )
   } else if ( formreset.pwdagagin !== formreset.pwd ) {
@@ -351,12 +343,7 @@ const submitForm = async() => {
 }
 
 const resetPasswordFun = async() => {
-  // const res = await customFormPwd.value.$refs.form.validate()
-  // console.log( res )
-  // console.log( customFormPwd.value.form.validate() )
   const flag = await customFormPwd.value.form.validate()
-
-  // eslint-disable-next-line no-unreachable
   if ( flag ) {
     const res = await resetPassword( { ...formreset } )
     console.log( res )
@@ -377,14 +364,9 @@ const formreset = reactive( {
   pwdagagin : ''
 } )
 
-const formRules = ref( {
-  // Custom form validation rules if needed
-} )
+const formRules = ref( {} )
 
-const formPwdRules = ref( {
-  // pwd : [{ validator : validatePass, trigger : 'blur' }],
-  // pwdagain : [{ validator : validatePass2, trigger : 'blur' }]
-} )
+const formPwdRules = ref( {} )
 defineExpose( { tableItemSelectionRef, customFormPwd } )
 </script>
 

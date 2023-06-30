@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, onBeforeMount, reactive, computed } from 'vue'
-import { login } from '@/api/user' // UserList
+import { login, hasPermission } from '@/api/user' // UserList
 import { useUserStore } from '@/store'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus/lib'
@@ -86,7 +86,7 @@ const trigger = ['blur', 'change']
 const formState = reactive( {
   country : '86',
   captcha : '',
-  account : '',
+  account : '123456',
   password : '123456Sb'
 } )
 const rules = {
@@ -140,6 +140,10 @@ function loginHandle() {
         userStore.SET_UID( res.data.userid )
         userStore.SET_TOKEN( res.data.token )
         userStore.SET_NAME( res.data.username )
+
+        const data = await hasPermission()
+        userStore.SET_PERMIT( data.data )
+        console.log( data )
         router.push( '/' )
       } catch ( e ) {
         ElMessage.error( e )

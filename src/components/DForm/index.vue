@@ -31,7 +31,8 @@
               :show-checkbox="item.option.showCheckbox || true"
               :node-key="item.option.nodeKey || 'id'"
               :default-checked-keys="formData[item.prop]"
-              @check="(obj1, obj2) => updateFormData(obj1, obj2, item.prop)"
+              check-strictly
+              @check="(obj1, obj2) => updateFormData(obj1, obj2, item.prop, item.option.nodeKey)"
             ></el-tree>
           </template>
           <template v-else-if="item.is === 'textarea'">
@@ -145,7 +146,7 @@ const props = defineProps( {
 } )
 
 const formData = reactive( props.form )
-const updateFormData = ( obj1, obj2, prop ) => {
+const updateFormData = ( obj1, obj2, prop, key ) => {
   formData[prop] = obj2.checkedKeys
 }
 const getEditorContent = ( prop, info ) => {

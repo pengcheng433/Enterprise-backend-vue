@@ -8,8 +8,8 @@
             <el-button class="ml-2" :icon="Search" circle @click="getroleList" />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="openDialog"></el-button>
-            <el-button type="danger" :icon="Delete" circle @click="dels"></el-button>
+            <el-button type="primary" :icon="Plus" circle @click="openDialog" v-haspermission="'addRole'"></el-button>
+            <el-button type="danger" :icon="Delete" circle @click="dels" v-haspermission="'delRole'"></el-button>
           </div>
         </el-row>
       </el-header>
@@ -38,6 +38,8 @@ import CustomTable from '@/components/DTable'
 import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
 
 onMounted( () => {
   getroleList()
@@ -45,12 +47,18 @@ onMounted( () => {
 } )
 
 const getroleList = async() => {
-  const { data } = await roleList( searchform )
-  tableData.value = data
+  const flag = await userStore.hasPermission( 'getAllRoles' )
+  if ( flag ) {
+    const { data } = await roleList( searchform )
+    tableData.value = data
+  }
 }
 const getpermissonTree = async() => {
-  const { data } = await permissonTree()
-  treeoption.data = data
+  const flag = await userStore.hasPermission( 'permissionList' )
+  if ( flag ) {
+    const { data } = await permissonTree()
+    treeoption.data = data
+  }
 }
 
 const tableData = ref( [] )
@@ -82,11 +90,11 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'findRole'}>
             编辑
           </el-button>
 
-          <el-button type='danger' onClick={() => dels( row )}>
+          <el-button type='danger' onClick={() => dels( row )} v-haspermission={'delRole'}>
             删除
           </el-button>
         </div>

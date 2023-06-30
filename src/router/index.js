@@ -3,7 +3,6 @@ import {
   // createWebHistory,
   createWebHashHistory
 } from 'vue-router'
-
 import Layout from '@/layout/index.vue'
 import usermanger from './modules/usermanger'
 // import customComponents from './modules/customComponents'
@@ -111,6 +110,7 @@ export const asyncRoutes = [
 
   // customComponents,
   {
+
     path : '/news',
     name : 'news',
     component : Layout,

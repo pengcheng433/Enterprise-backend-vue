@@ -5,6 +5,7 @@ import dobounce from './dobounce'
 import waterMarker from './waterMarker'
 import draggable from './draggable'
 import permission from './permission'
+import haspermission from './hasPermissions'
 
 const directives = {
   clipboard,
@@ -13,7 +14,8 @@ const directives = {
   waterMarker,
   draggable,
   permission,
-  wave
+  wave,
+  haspermission
 }
 
 const registerDirective = app => {

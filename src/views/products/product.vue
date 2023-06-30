@@ -8,11 +8,17 @@
             <el-select class="w-50 ml-1" v-model="searchform.category" placeholder="选择分类" size="large" clearable>
               <el-option v-for="item in options.list" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <el-button class="ml-2" :icon="Search" circle @click="getProductsListFun" />
+            <el-button
+              class="ml-2"
+              :icon="Search"
+              circle
+              @click="getProductsListFun"
+              v-haspermission="'getProductList'"
+            />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="gotoadd"></el-button>
-            <el-button type="danger" :icon="Delete" circle @click="dels"></el-button>
+            <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addProduct'"></el-button>
+            <el-button type="danger" :icon="Delete" circle @click="dels" v-haspermission="'deleteProduct'"></el-button>
           </div>
         </el-row>
       </el-header>
@@ -54,14 +60,12 @@ import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-
+import { useUserStore } from '@/store'
 import { addProduct, getProductList, getProductById, updateProduct, deleteProduct, enableProduct } from '@/api/product'
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-// import formatTime from '@/utils/fomattime'
-
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-
+const userStore = useUserStore()
 const loading = ref( false )
 onMounted( () => {
   getProductsListFun()
@@ -127,11 +131,14 @@ const formItems = ref( [
 const dialogVisible = ref( false )
 
 const getProductsListFun = async() => {
-  loading.value = true
-  const { data } = await getProductList( searchform )
-  loading.value = false
-  tableData.value = data.data
-  total.value = data.total
+  const flag = await userStore.hasPermission( 'getProductList' )
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getProductList( searchform )
+    loading.value = false
+    tableData.value = data.data
+    total.value = data.total
+  }
 }
 
 const tableData = ref( [] )
@@ -159,8 +166,7 @@ const tableColumns = ref( [
               fit='cover'
               z-index={10001}
               preview-src-list={[row.conver_img]}
-              preview-teleported={true}
-            ></el-image>
+              preview-teleported={true}></el-image>
           ) : (
             '无'
           )}
@@ -199,20 +205,20 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'getProductById'}>
             编辑
           </el-button>
           {row.state == 1 ? (
-            <el-button type='warning' onClick={() => changgestateFun( row )}>
+            <el-button type='warning' onClick={() => changgestateFun( row )} v-haspermission={'enableProduct'}>
               禁用
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => changgestateFun( row )}>
+            <el-button type='success' onClick={() => changgestateFun( row )} v-haspermission={'enableProduct'}>
               启用
             </el-button>
           )}
 
-          <el-button type='danger' onClick={() => dels( row )}>
+          <el-button type='danger' onClick={() => dels( row )} v-haspermission={'deleteProduct'}>
             删除
           </el-button>
         </div>

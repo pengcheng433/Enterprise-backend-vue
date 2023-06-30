@@ -1,9 +1,9 @@
 <template>
   <div :class="{ show: show }" class="header-search">
     <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
-    <span style="display: inline-block; color: red; width: 40px; height: 30px; line-height: 30px">
+    <!-- <span style="display: inline-block; color: red; width: 40px; height: 30px; line-height: 30px">
       {{ options.length }}</span
-    >
+    > -->
     <el-select
       ref="headerSearchSelect"
       v-model="search"
@@ -11,7 +11,7 @@
       filterable
       default-first-option
       remote
-      placeholder="Search"
+      placeholder="搜索菜单"
       class="header-search-select"
       @change="change"
     >

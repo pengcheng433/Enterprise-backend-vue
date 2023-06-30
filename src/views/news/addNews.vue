@@ -13,14 +13,12 @@
 
 <script setup lang="jsx">
 import { ref, onMounted, defineExpose, reactive } from 'vue'
-import { roleList } from '@/api/role'
 import CustomForm from '@/components/DForm'
 import { ElMessage } from 'element-plus/lib'
 import { addNews } from '@/api/news'
 import { getNewsCategorydic } from '@/api/newCategory'
 
 onMounted( () => {
-  getroleList()
   getNewsCategoryDicFun()
 } )
 
@@ -28,12 +26,7 @@ const getNewsCategoryDicFun = async() => {
   const { data } = await getNewsCategorydic()
   list.list = data
 }
-const getroleList = async() => {
-  const { data } = await roleList( searchform )
-  tableData.value = data
-}
 
-const tableData = ref( [] )
 const tableItemSelectionRef = ref( null )
 
 // const dialogVisible = ref( false )
@@ -77,9 +70,6 @@ const formItems = ref( [
   }
 ] )
 
-const searchform = reactive( {
-  search : ''
-} )
 const form = reactive( {
   title : '',
   coverImage : '',
@@ -100,7 +90,6 @@ const submitForm = async() => {
         message : res.msg,
         type : 'success'
       } )
-      getroleList()
     } else {
       ElMessage.error( res.msg )
     }

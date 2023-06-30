@@ -58,13 +58,6 @@ export function delUser( data ) {
     data
   } )
 }
-export function getInfo( data ) {
-  return http.request( {
-    method : 'get',
-    url : '/getUserInfo',
-    data
-  } )
-}
 
 // 重置密码
 export function resetPassword( data ) {
@@ -84,23 +77,11 @@ export function getSalesUsers( data ) {
   } )
 }
 
-export function logout() {
+// 获取登录用户的角色权限 的url
+export function hasPermission( data ) {
   return http.request( {
-    url : '/logout',
-    method : 'get'
-  } )
-}
-
-export function loginHistory() {
-  return http.request( {
-    url : '/login/history',
-    method : 'get'
-  } )
-}
-
-export function testRequest() {
-  return http.request( {
-    url : '/test',
-    method : 'get'
+    method : 'get',
+    url : '/permisson/hasPermission',
+    data
   } )
 }

@@ -4,13 +4,7 @@
       <el-header class="h-auto">
         <el-row class="flex-row flex-between">
           <div class="flex-row">
-            <el-select
-              v-model="searchform.type"
-              class="ml-2"
-              placeholder=""
-              size="large"
-              @change="getClientListFun"
-            >
+            <el-select v-model="searchform.type" class="ml-2" placeholder="" size="large" @change="getClientListFun">
               <el-option label="客户公海" value="0" key="0" />
               <el-option label="我的客户" value="1" key="1" />
             </el-select>
@@ -18,11 +12,20 @@
             <el-select v-model="searchform.status" class="ml-2" placeholder="客户类型" size="large" clearable>
               <el-option v-for="item in list1.list" :key="item" :label="item.name" :value="item.id" />
             </el-select>
-            <el-button class="ml-2" :icon="Search" circle @click="getClientListFun" />
+            <el-button class="ml-2" :icon="Search" circle @click="getClientListFun" v-haspermission="'getClientList'" />
           </div>
           <div>
-            <el-button type="primary" :icon="Plus" circle @click="gotoadd"></el-button>
-            <el-button type="success" :icon="Share" circle @click="shareFun"></el-button>
+            <el-button type="primary" @click="importExlFul">导入</el-button>
+            <el-button type="primary" @click="uploadExlFun">下载模板</el-button>
+
+            <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addClient'"></el-button>
+            <el-button
+              type="success"
+              :icon="Share"
+              circle
+              @click="shareFun"
+              v-haspermission="'assignClient'"
+            ></el-button>
           </div>
         </el-row>
       </el-header>
@@ -121,6 +124,7 @@
       <el-row :gutter="20">
         <el-col :span="20">
           <el-switch
+            v-haspermission="'changgeDeal'"
             @change="changgeDealFun"
             style="margin: 0px 0px 12x 50px; --el-switch-on-color: #13ce66; --el-switch-off-color: gray"
             v-model="hasContract"
@@ -138,7 +142,11 @@
           :labelWidth="120"
         ></CustomForm>
         <div class="flex justify-start leftbtn1">
-          <el-button type="primary" @click="addFollowFun">添加跟进记录</el-button>
+          <el-button type="primary"
+@click="addFollowFun"
+v-haspermission="'createFollowUpRecord'"
+            >添加跟进记录</el-button
+          >
         </div>
       </div>
       <!-- :icon="CircleCheck" -->
@@ -180,6 +188,7 @@
 </template>
 
 <script setup lang="jsx">
+import { DOMAIN_REAL } from '@/config/constant'
 import level from '@province-city-china/level'
 import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
@@ -188,7 +197,8 @@ import { ref, onMounted, computed, defineExpose, reactive, watch } from 'vue'
 import { getSalesUsers } from '@/api/user'
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-// import formatTime from '@/utils/fomattime'
+import { useUserStore } from '@/store'
+import ExcelJS from 'exceljs'
 import {
   getClientList,
   addClient,
@@ -199,13 +209,13 @@ import {
   changeSea,
   transferOwnClient,
   assignClient,
-  changgeDeal
+  changgeDeal, importExl
 } from '@/api/client'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 const assignFormRef = ref( '' )
 
 const hasContract = ref( false )
-
+const userStore = useUserStore()
 // 主管或者管理员的操作业务
 const assignSubmit = async() => {
   const res = await assignFormRef.value.validate()
@@ -235,6 +245,45 @@ const changgeDealFun = async value => {
   if ( res.data ) {
     getClientListFun()
   }
+}
+
+const importExlFul = () => {
+  const input = document.createElement( 'input' )
+  input.type = 'file'
+  input.accept = '.xlsx' // 只接受xlsx格式的文件
+  input.addEventListener( 'change', handleFileSelect )
+  input.click()
+}
+const handleFileSelect = async( event ) => {
+  const file = event.target.files[0]
+  if ( !file ) return
+  const reader = new FileReader()
+  // 处理exlss文件变成数据 传入接口
+  reader.onload = async( e ) => {
+    const data = new Uint8Array( e.target.result )
+    const workbook = new ExcelJS.Workbook()
+    await workbook.xlsx.load( data )
+    const worksheet = workbook.getWorksheet( 'Sheet1' )
+    const jsonData = []
+    worksheet.eachRow( ( row, rowNumber ) => {
+      const rowData = {}
+      row.eachCell( ( cell, colNumber ) => {
+        if ( colNumber === 1 ) {
+          rowData.name = cell.value
+        } else if ( colNumber === 2 ) {
+          rowData.tel = cell.value
+        }
+      } )
+      jsonData.push( rowData )
+    } )
+    const res = await importExl( { arr : jsonData } )
+    if ( res.data ) {
+      ElMessage.success( res.msg )
+      getClientListFun()
+    }
+  }
+  reader.readAsArrayBuffer( file )
+  event.target.value = ''
 }
 const nowuserid = localStorage.getItem( 'uid' )
 const addressoptions = reactive( {
@@ -272,7 +321,6 @@ const modifyKeyInArray = ( arr, keyMap ) => {
 }
 // 分配客户给公海或者是指定销售  销售主管或者是超级管理员的功能
 const shareFun = () => {
-  console.log()
   const flag = selectionTable.value.length !== 0
   if ( flag ) {
     assignDialogVisible.value = true
@@ -280,13 +328,17 @@ const shareFun = () => {
     ElMessage.warning( '至少选中一条数据' )
   }
 }
+
+// 下载客户模板
+const uploadExlFun = async() => {
+  window.open( DOMAIN_REAL + '/Templates.xlsx', '_blank' )
+}
 const loading = ref( false )
 onMounted( async() => {
   getClientListFun()
   await getSalesUsersFun()
-  console.log( userList.value )
+
   assignDoptions.value.push( { label : '销售列表', options : userList.value } )
-  console.log( assignDoptions.value )
 
   getProductsCategoryDicFun()
   addressoptions.list = modifyKeyInArray( level, { code : 'value', name : 'label' } )
@@ -481,11 +533,15 @@ const formItems = ref( [
 const dialogVisible = ref( false )
 const assignDialogVisible = ref( false )
 const getClientListFun = async() => {
-  loading.value = true
-  const { data } = await getClientList( searchform )
-  loading.value = false
-  tableData.value = data.data
-  total.value = data.total
+  const flag = await userStore.hasPermission( 'getClientList' )
+
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getClientList( searchform )
+    loading.value = false
+    tableData.value = data.data
+    total.value = data.total
+  }
 }
 
 const tableData = ref( [] )
@@ -584,24 +640,24 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'findClient'}>
             编辑
           </el-button>
           {row.belong_sea == 1 ? (
-            <el-button type='success' onClick={() => transferToSea( row )}>
+            <el-button type='success' onClick={() => transferToSea( row )} v-haspermission={'changeSea'}>
               转移到公海
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => getClient( row )}>
+            <el-button type='success' onClick={() => getClient( row )} v-haspermission={'transferOwnClient'}>
               跟进客户
             </el-button>
           )}
 
-          <el-button type='success' onClick={() => assignFun( row )}>
+          <el-button type='success' onClick={() => assignFun( row )} v-haspermission={'assignClient'}>
             分配客户
           </el-button>
           {row.belong_sea == 1 ? (
-            <el-button type='success' onClick={() => followFun( row )}>
+            <el-button type='success' onClick={() => followFun( row )} v-haspermission={'createFollowUpRecord'}>
               跟进记录
             </el-button>
           ) : (
@@ -750,12 +806,10 @@ const objTitle = reactive( {
 const followList = ref( [] )
 const followFun = async row => {
   isLoading.value = true
-
   formFollow.customer_id = row.id
   objTitle.name = row.name
   objTitle.company_name = row.company_name
   rightTable.value = true
-  console.log( objTitle )
   hasContract.value = !!row.has_deal
   const res = await getClientFollowUpRecords( { client_id : row.id } )
   followList.value = res.data
@@ -770,7 +824,6 @@ const gotoadd = () => {
   form.phone = ''
   form.email = ''
   form.status = ''
-  // form.belong_sea = ''
   form.address_en = ''
   dialogVisible.value = true
 }

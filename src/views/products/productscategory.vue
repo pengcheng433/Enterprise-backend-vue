@@ -40,7 +40,7 @@ import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
 import { ref, onMounted, computed, defineExpose, reactive } from 'vue'
-
+import { useUserStore } from '@/store'
 import {
   addProductsCategory,
   getProductsCategoryList,
@@ -50,10 +50,9 @@ import {
   deleteProductsCategory
 } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
-// import formatTime from '@/utils/fomattime'
 
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
-
+const userStore = useUserStore()
 const loading = ref( false )
 onMounted( () => {
   getProductsCategoryListFun()
@@ -81,10 +80,13 @@ const formItems = ref( [
 const dialogVisible = ref( false )
 
 const getProductsCategoryListFun = async() => {
-  loading.value = true
-  const { data } = await getProductsCategoryList( searchform )
-  loading.value = false
-  tableData.value = data
+  const flag = await userStore.hasPermission( 'getProductsCategoryList' )
+  if ( flag ) {
+    loading.value = true
+    const { data } = await getProductsCategoryList( searchform )
+    loading.value = false
+    tableData.value = data
+  }
 }
 
 const tableData = ref( [] )
@@ -113,20 +115,20 @@ const tableColumns = ref( [
     render : row => {
       return (
         <div class='flex'>
-          <el-button type='primary' onClick={() => edit( row )}>
+          <el-button type='primary' onClick={() => edit( row )} v-haspermission={'getProductsCategoryById'}>
             编辑
           </el-button>
           {row.state == 1 ? (
-            <el-button type='warning' onClick={() => changgestateFun( row )}>
+            <el-button type='warning' onClick={() => changgestateFun( row )} v-haspermission={'enableProductsCategory '}>
               禁用
             </el-button>
           ) : (
-            <el-button type='success' onClick={() => changgestateFun( row )}>
+            <el-button type='success' onClick={() => changgestateFun( row )} v-haspermission={'enableProductsCategory '}>
               启用
             </el-button>
           )}
 
-          <el-button type='danger' onClick={() => dels( row )}>
+          <el-button type='danger' onClick={() => dels( row )} v-haspermission={'deleteProductsCategory'}>
             删除
           </el-button>
         </div>
@@ -217,7 +219,6 @@ const changgestateFun = async row => {
 const gotoadd = () => {
   form.id = ''
   form.name = ''
-
   form.description = ''
   dialogVisible.value = true
 }

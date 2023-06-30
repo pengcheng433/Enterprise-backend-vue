@@ -87,3 +87,21 @@ export function changgeDeal( data ) {
     data
   } )
 }
+
+// 下载客户模板
+export function uploadExl( data ) {
+  return http.request( {
+    url : '/client/uploadExl',
+    method : 'get',
+    data
+  } )
+}
+
+// 导入客户
+export function importExl( data ) {
+  return http.request( {
+    url : '/client/importExl',
+    method : 'post',
+    data
+  } )
+}

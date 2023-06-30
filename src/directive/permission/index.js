@@ -2,6 +2,7 @@ import { usePermissionStore } from '@/store'
 
 const permission = {
   mounted : function( el, binding ) {
+    console.log( el, binding )
     const permissionStore = usePermissionStore()
     const { value } = binding
     const roleData = permissionStore.directivePermission

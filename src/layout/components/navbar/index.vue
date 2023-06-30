@@ -25,7 +25,7 @@
 
       <el-dropdown class="p8 avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="set.avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
+          <img src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" class="user-avatar" />
 
           <div class="username">
             {{ set.userName }}
@@ -37,7 +37,6 @@
 
         <template #dropdown>
           <el-dropdown-menu>
-
             <router-link to="/">
               <el-dropdown-item>首 页</el-dropdown-item>
             </router-link>
