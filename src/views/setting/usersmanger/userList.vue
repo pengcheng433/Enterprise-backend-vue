@@ -114,8 +114,8 @@ const tableColumns = ref( [
     }
   },
   {
-    prop : 'lastlogintime',
-    label : '登陆时间'
+    prop : 'createtime',
+    label : '创建时间'
   },
   {
     prop : 'setting',

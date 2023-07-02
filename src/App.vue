@@ -23,6 +23,7 @@ export default defineComponent( {
     const appStore = useAppStore()
     const locale = computed( () => ( appStore.lang === 'zh' ? zh : en ) )
     const size = computed( () => appStore.size )
+
     return {
       locale,
       size

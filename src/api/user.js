@@ -85,3 +85,21 @@ export function hasPermission( data ) {
     data
   } )
 }
+
+// 修改个人密码
+export function changePersonalPassword( data ) {
+  return http.request( {
+    method : 'post',
+    url : '/user/changePersonalPassword',
+    data
+  } )
+}
+
+// 历史登录记录
+export function getloginhistory( data ) {
+  return http.request( {
+    method : 'get',
+    url : '/user/getloginhistory',
+    data
+  } )
+}

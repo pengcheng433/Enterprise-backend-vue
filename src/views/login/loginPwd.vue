@@ -117,7 +117,6 @@ onBeforeMount( () => {
 function loginHandle() {
   loading.value = true
   ruleForm.value.validate( async valid => {
-    console.log( valid )
     if ( valid ) {
       try {
         const params = {

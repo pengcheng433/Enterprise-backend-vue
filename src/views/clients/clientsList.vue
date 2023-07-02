@@ -15,9 +15,8 @@
             <el-button class="ml-2" :icon="Search" circle @click="getClientListFun" v-haspermission="'getClientList'" />
           </div>
           <div>
-            <el-button type="primary" @click="importExlFul">导入</el-button>
-            <el-button type="primary" @click="uploadExlFun">下载模板</el-button>
-
+            <el-button type="primary" @click="importExlFul" v-haspermission="'importExl'">导入</el-button>
+            <el-button type="primary" @click="uploadExlFun" v-haspermission="'uploadExl'">下载模板</el-button>
             <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addClient'"></el-button>
             <el-button
               type="success"
@@ -209,7 +208,8 @@ import {
   changeSea,
   transferOwnClient,
   assignClient,
-  changgeDeal, importExl
+  changgeDeal,
+  importExl
 } from '@/api/client'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 const assignFormRef = ref( '' )
@@ -254,12 +254,12 @@ const importExlFul = () => {
   input.addEventListener( 'change', handleFileSelect )
   input.click()
 }
-const handleFileSelect = async( event ) => {
+const handleFileSelect = async event => {
   const file = event.target.files[0]
   if ( !file ) return
   const reader = new FileReader()
   // 处理exlss文件变成数据 传入接口
-  reader.onload = async( e ) => {
+  reader.onload = async e => {
     const data = new Uint8Array( e.target.result )
     const workbook = new ExcelJS.Workbook()
     await workbook.xlsx.load( data )
@@ -608,18 +608,18 @@ const tableColumns = ref( [
       const fllag = row.belong_sea
       const userobj = userList.value.find( item => item.userid == row.userid ) || { username : '' }
 
-      return fllag == 0 ? '公海' : userobj.username
+      return fllag == 0 ? '公海' : userobj.username == '' ? '管理员' : userobj.username
     }
   },
   {
     width : 170,
-    prop : 'updated_at',
-    label : '下次联系时间'
+    prop : 'last_contact_date',
+    label : '最后联系时间'
   },
   {
     width : 170,
-    prop : 'created_at',
-    label : '创建时间'
+    prop : 'next_contact_date',
+    label : '下次联系时间'
   },
 
   {
@@ -627,10 +627,11 @@ const tableColumns = ref( [
     prop : 'updated_at',
     label : '客户分配时间'
   },
+
   {
     width : 170,
-    prop : 'updated_at',
-    label : '最后联系时间'
+    prop : 'created_at',
+    label : '创建时间'
   },
 
   {

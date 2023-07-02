@@ -41,8 +41,11 @@
               <el-dropdown-item>首 页</el-dropdown-item>
             </router-link>
 
+            <el-dropdown-item divided @click="changgepwd">
+              <span style="display: block">修改密码</span>
+            </el-dropdown-item>
             <el-dropdown-item divided @click="logout">
-              <span style="display: block">登 出</span>
+              <span style="display: block">退出系统</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -55,10 +58,20 @@
       </div>
     </div>
   </div>
+  <!-- 密码重置对话框 -->
+  <CustomDialog v-model:visible="Visible" title="修改密码" width="20%">
+    <CustomForm :form-items="formresetItem" :form="formreset" :rules="formPwdRules" ref="customFormPwd"></CustomForm>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="Visible = false">退出</el-button>
+        <el-button type="primary" @click="resetPasswordFun"> 确定 </el-button>
+      </span>
+    </template>
+  </CustomDialog>
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import { useRouter } from 'vue-router'
 import HamBurger from './components/HamBurger'
@@ -67,9 +80,70 @@ import HeaderSearch from './components/HeaderSearch'
 import ScreenFull from './components/Screenfull'
 import SizeSelect from './components/SizeSelect'
 import { emitter } from '@/utils/mitt'
-
+import CustomDialog from '@/components/DDialog'
+import CustomForm from '@/components/DForm'
 import Logo from '@/layout/components/sidebar/Logo'
 import MenuBar from '../sidebar/Menu'
+import { changePersonalPassword } from '@/api/user'
+import { ElMessage } from 'element-plus/lib'
+const formreset = reactive( {
+  oldpwd : '',
+  pwd : '',
+  pwdagagin : ''
+} )
+const customFormPwd = ref( null )
+const formPwdRules = ref( {} )
+const Visible = ref( false )
+const validatePass = ( rule, value, callback ) => {
+  var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/
+  if ( formreset.pwd === '' ) {
+    callback( new Error( '输入密码' ) )
+  } else if ( reg.test( formreset.pwd ) == false ) {
+    callback( new Error( '密码至少包含 数字和英文，长度6-20' ) )
+  } else {
+    if ( formreset.pwdagagin !== '' ) {
+      if ( !customFormPwd.value ) return
+      customFormPwd.value.$refs.form.validateField( 'pwdagagin', () => null )
+    }
+    callback()
+  }
+}
+const validatePass2 = ( rule, value, callback ) => {
+  if ( formreset.pwdagagin === '' ) {
+    callback( new Error( '输入二次密码' ) )
+  } else if ( formreset.pwdagagin !== formreset.pwd ) {
+    callback( new Error( '密码不一致' ) )
+  } else {
+    callback()
+  }
+}
+const changgepwd = () => {
+  Visible.value = true
+}
+const formresetItem = [
+  {
+    prop : 'oldpwd',
+    label : '原密码',
+    span : 20,
+    rules : [{ trigger : 'blur', required : true, message : '输入原密码' }]
+  },
+  {
+    prop : 'pwd',
+    label : '新密码',
+    span : 20,
+    type : 'password',
+    showPassword : true,
+    rules : [{ validator : validatePass, trigger : 'blur', required : true }]
+  },
+  {
+    prop : 'pwdagagin',
+    label : '确认新密码',
+    span : 20,
+    type : 'password',
+    showPassword : true,
+    rules : [{ validator : validatePass2, trigger : 'blur', required : true }]
+  }
+]
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -100,6 +174,26 @@ const set = reactive( {
     return appStore.device
   } )
 } )
+
+const resetPasswordFun = async() => {
+  const flag = await customFormPwd.value.form.validate()
+  if ( flag ) {
+    const res = await changePersonalPassword( {
+      userId : userStore.uid,
+      oldPassword : formreset.oldpwd,
+      newPassword : formreset.pwdagagin
+    } )
+    if ( res.data ) {
+      ElMessage.success( '修改成功' )
+      Visible.value = false
+      setTimeout( async() => {
+        await logout()
+      }, 2000 )
+    } else {
+      ElMessage.error( res.msg )
+    }
+  }
+}
 
 // 退出登录
 const logout = async() => {

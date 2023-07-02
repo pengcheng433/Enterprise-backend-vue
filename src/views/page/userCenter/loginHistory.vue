@@ -27,7 +27,7 @@
 <script setup lang="jsx">
 import { ref } from 'vue'
 import LoginHistory from './components/infoLayout'
-
+import { getloginhistory } from '@/api/user'
 const loading = ref( false )
 
 const LoginMethod = {
@@ -45,34 +45,41 @@ const columns = ref( [
     align : 'center',
     width : 106,
     cellRenderer : ( { rowData } ) => {
-      return <div>{LoginMethod[rowData.method]}</div>
+      return <div>{LoginMethod[1]}</div>
     }
   },
+  // {
+  //   key : 'deviceType',
+  //   title : '设备名称',
+  //   dataKey : 'deviceType',
+  //   align : 'center',
+  //   width : 231
+  // },
+  // {
+  //   key : 'deviceOs',
+  //   title : '系统',
+  //   dataKey : 'deviceOs',
+  //   align : 'center',
+  //   width : 110
+  // },
   {
-    key : 'deviceType',
-    title : '设备名称',
-    dataKey : 'deviceType',
+    key : 'name',
+    title : '用户名',
+    dataKey : 'name',
     align : 'center',
     width : 231
   },
   {
-    key : 'deviceOs',
-    title : '系统',
-    dataKey : 'deviceOs',
-    align : 'center',
-    width : 110
-  },
-  {
-    key : 'loginAddr',
-    title : '登录地点',
-    dataKey : 'loginAddr',
+    key : 'ipaddress',
+    title : '登录IP地点',
+    dataKey : 'ipaddress',
     align : 'center',
     width : 231
   },
   {
-    key : 'loginTime',
+    key : 'time',
     title : '最后登录时间',
-    dataKey : 'loginTime',
+    dataKey : 'time',
     align : 'center',
     width : 231
   }
@@ -81,11 +88,11 @@ const tableData = ref( [{ loginTime : 1 }] )
 
 const getHistory = async() => {
   loading.value = true
-
+  const data = await getloginhistory()
+  tableData.value = data.data
   loading.value = false
 }
 getHistory()
-
 defineOptions( {
   name : 'LoginHistory'
 } )
