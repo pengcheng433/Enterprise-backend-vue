@@ -59,6 +59,16 @@
             >
               <el-icon><Picture /></el-icon>
             </el-button>
+
+            <el-button
+              v-if="formData[item.prop]"
+              style="margin-left: 5px"
+              @click="delimg(formData[item.prop],item.prop)"
+              type="danger"
+              :icon="Delete"
+              circle
+            >
+            </el-button>
           </template>
           <template v-else-if="item.is === 'number'">
             <el-input-number v-model="formData[item.prop]" :min="1" :controls="false" />
@@ -104,7 +114,7 @@
 </template>
 
 <script setup>
-import { Picture } from '@element-plus/icons-vue'
+import { Picture, Delete } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import YuTinymce from '@/components/YuTinymce'
 import { ElMessage } from 'element-plus/lib'
@@ -120,6 +130,10 @@ const uploaddialogVisible = ref( false )
 const handlePictureCardPreview = uploadFile => {
   dialogImageUrl.value = uploadFile
   uploaddialogVisible.value = true
+}
+
+const delimg = ( val, prop ) => {
+  formData[prop] = ''
 }
 defineExpose( { form } )
 const props = defineProps( {

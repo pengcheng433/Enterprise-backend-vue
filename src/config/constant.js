@@ -41,5 +41,7 @@ export const LOGIN_ERROR_CODE = [
   }
 ]
 
+// export const DOMAIN_REAL = 'http://124.222.60.105:8080/exl/'
+// export const DOMAIN_REAL = 'http://admin.japannetgo.xyz'
 export const DOMAIN_REAL = 'http://localhost:3031'
 

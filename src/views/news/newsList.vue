@@ -128,6 +128,7 @@ const tableColumns = ref( [
   {
     prop : 'setting',
     label : '操作',
+    width : 294,
     render : row => {
       return (
         <div class='flex'>

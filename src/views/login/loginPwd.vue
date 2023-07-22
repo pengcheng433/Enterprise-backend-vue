@@ -86,8 +86,8 @@ const trigger = ['blur', 'change']
 const formState = reactive( {
   country : '86',
   captcha : '',
-  account : '123456',
-  password : '123456Sb'
+  account : '',
+  password : ''
 } )
 const rules = {
   account : [{ required : true, message : '请输入账号', trigger }],

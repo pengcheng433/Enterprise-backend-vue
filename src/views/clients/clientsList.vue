@@ -15,7 +15,7 @@
             <el-button class="ml-2" :icon="Search" circle @click="getClientListFun" v-haspermission="'getClientList'" />
           </div>
           <div>
-            <el-button type="primary" @click="importExlFul" v-haspermission="'importExl'">导入</el-button>
+            <el-button type="primary" @click="importExlFul" v-haspermission="'importExl'">导入客户</el-button>
             <el-button type="primary" @click="uploadExlFun" v-haspermission="'uploadExl'">下载模板</el-button>
             <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addClient'"></el-button>
             <el-button
@@ -108,7 +108,7 @@
             <el-col :span="1"
               ><el-icon class="iconlg"><Document /></el-icon
             ></el-col>
-            <el-col :span="6">
+            <el-col :span="8" style="margin-left:12px">
               <div>
                 {{ objTitle.company_name }}
               </div>
@@ -167,17 +167,17 @@ v-haspermission="'createFollowUpRecord'"
         >
           <el-card>
             <h3>{{ item.context || '' }}</h3>
-            <el-row :gutter="20" style="margin-top: 10px">
-              <el-col :span="5">
+            <el-row  style="margin-top: 10px">
+              <el-col :span="4">
                 <span>拜访人:{{ item.user_name || '' }} </span></el-col
               >
-              <el-col :span="5">
+              <el-col :span="4">
                 <span>拜访方式:{{ toContact_method(item.contact_method) || '' }} </span></el-col
               >
-              <el-col :span="5">
+              <el-col :span="6">
                 <span> 拜访日期:{{ item.date || '' }} </span></el-col
               >
-              <el-col :span="5"> 下次拜访日期:{{ item.next_contact_date || '' }}</el-col>
+              <el-col :span="6"> 下次拜访日期:{{ item.next_contact_date || '' }}</el-col>
             </el-row>
           </el-card>
         </el-timeline-item>
@@ -211,6 +211,7 @@ import {
   changgeDeal,
   importExl
 } from '@/api/client'
+
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
 const assignFormRef = ref( '' )
 
@@ -331,7 +332,7 @@ const shareFun = () => {
 
 // 下载客户模板
 const uploadExlFun = async() => {
-  window.open( DOMAIN_REAL + '/Templates.xlsx', '_blank' )
+  window.open( DOMAIN_REAL + '/TemplatesCustomers.xlsx', '_blank' )
 }
 const loading = ref( false )
 onMounted( async() => {
@@ -808,6 +809,17 @@ const followList = ref( [] )
 const followFun = async row => {
   isLoading.value = true
   formFollow.customer_id = row.id
+  //   const formFollow = reactive( {
+  //   customer_id : '',
+  //   date : '',
+  //   content : '',
+  //   next_contact_date : '',
+  //   contact_method : ''
+  // } )
+  formFollow.date = ''
+  formFollow.content = ''
+  formFollow.next_contact_date = ''
+  formFollow.contact_method = ''
   objTitle.name = row.name
   objTitle.company_name = row.company_name
   rightTable.value = true

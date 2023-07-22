@@ -11,7 +11,8 @@ import { WHITE_CODE_LIST, LOGIN_ERROR_CODE, GLOBAL_DATA } from '@/config/constan
 class HttpRequest {
   // #baseUrl
   constructor() {
-    this.baseUrl = this.getBaseUrl()
+    // this.baseUrl = this.getBaseUrl()
+    // this.baseUrl = 'http://192.168.110.27:8888'
     this.baseUrl = 'http://localhost:3031'
     this.withCredentials = false
     this.timeout = 60 * 60 * 24 * 1000

@@ -17,6 +17,8 @@
             />
           </div>
           <div>
+            <el-button type="primary" @click="importExlFun">导入产品</el-button>
+            <el-button type="primary" @click="uploadExlFun">下载模板</el-button>
             <el-button type="primary" :icon="Plus" circle @click="gotoadd" v-haspermission="'addProduct'"></el-button>
             <el-button type="danger" :icon="Delete" circle @click="dels" v-haspermission="'deleteProduct'"></el-button>
           </div>
@@ -56,6 +58,7 @@
 </template>
 
 <script setup lang="jsx">
+import { DOMAIN_REAL } from '@/config/constant'
 import CustomDialog from '@/components/DDialog'
 import CustomForm from '@/components/DForm'
 import { Plus, Delete, Search } from '@element-plus/icons-vue'
@@ -65,6 +68,7 @@ import { addProduct, getProductList, getProductById, updateProduct, deleteProduc
 import { getProductsCategoryDict } from '@/api/productsCategory'
 import CustomTable from '@/components/DTable'
 import { ElMessage, ElMessageBox } from 'element-plus/lib'
+import { uoloadexl } from '@/api/news'
 const userStore = useUserStore()
 const loading = ref( false )
 onMounted( () => {
@@ -75,6 +79,42 @@ const options = reactive( {
   list : []
 } )
 
+const importExlFun = () => {
+  const input = document.createElement( 'input' )
+  input.type = 'file'
+  input.accept = '.xlsx' // 只接受xlsx格式的文件
+  input.addEventListener( 'change', handleFileSelect )
+  input.click()
+}
+// 导入产品
+const handleFileSelect = async( event ) => {
+  const file = event.target.files[0]
+
+  const formDatafile = new FormData()
+  formDatafile.append( 'file', file )
+
+  if ( !file ) return
+
+  try {
+    // 调用上传函数 uoloadexl 并传递文件数据作为参数
+    const res = await uoloadexl( formDatafile )
+
+    if ( res.data ) {
+      ElMessage( {
+        message : res.msg,
+        type : 'success'
+      } )
+      getProductsListFun()
+    }
+  } catch ( error ) {
+    // 处理上传失败的逻辑
+    console.error( '上传失败：', error )
+  }
+}
+// 下载产品模板
+const uploadExlFun = async() => {
+  window.open( DOMAIN_REAL + '/TemplatesProduct.xlsx', '_blank' )
+}
 // 使用 reactive 创建响应式对象
 const list = reactive( {
   list : [],
@@ -92,6 +132,7 @@ const title = computed( () => {
 const form = reactive( {
   name : '',
   conver_img : '',
+  qrcode_img : '',
   category_id : '',
   price : '',
   description : ''
@@ -106,7 +147,14 @@ const formItems = ref( [
   {
     prop : 'conver_img',
     label : '产品缩略图',
-    is : 'upload'
+    is : 'upload',
+    span : 12
+  },
+  {
+    prop : 'qrcode_img',
+    label : '二维码图',
+    is : 'upload',
+    span : 12
   },
 
   {
@@ -175,6 +223,26 @@ const tableColumns = ref( [
     }
   },
   {
+    prop : 'qrcode_img',
+    label : '二维码预览',
+    render : row => {
+      return (
+        <div class='image-container-news'>
+          {row.qrcode_img ? (
+            <el-image
+              src={row.qrcode_img}
+              fit='cover'
+              z-index={10001}
+              preview-src-list={[row.qrcode_img]}
+              preview-teleported={true}></el-image>
+          ) : (
+            '无'
+          )}
+        </div>
+      )
+    }
+  },
+  {
     prop : 'category_id',
     label : '产品分类',
     render : row => {
@@ -202,6 +270,7 @@ const tableColumns = ref( [
   {
     prop : 'setting',
     label : '操作',
+    width : 224,
     render : row => {
       return (
         <div class='flex'>
@@ -261,10 +330,11 @@ const submitForm = async() => {
 // 编辑
 const edit = async row => {
   const res = await getProductById( { id : row.id } )
-  const { id, name, description, conver_img, price, category_id } = res.data
+  const { id, name, description, conver_img, price, category_id, qrcode_img } = res.data
   form.id = id
   form.name = name
   form.conver_img = conver_img
+  form.qrcode_img = qrcode_img
   form.category_id = category_id
   form.price = price
   form.description = description

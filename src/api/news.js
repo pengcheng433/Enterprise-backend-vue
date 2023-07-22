@@ -61,6 +61,15 @@ export function uoloadImg( formData ) {
     type : 'upload'
   } )
 }
+// 上传exl 导入产品
+export function uoloadexl( formData ) {
+  return http.request( {
+    method : 'post',
+    url : '/product/uploadXlsx',
+    data : formData,
+    type : 'upload'
+  } )
+}
 // 置顶新闻
 export function setTopNews( data ) {
   return http.request( {

@@ -121,6 +121,7 @@ const tableColumns = ref( [
   { prop : 'ip', label : '网络IP归属' },
 
   {
+    width : 180,
     prop : 'setting',
     label : '操作',
     render : row => {
